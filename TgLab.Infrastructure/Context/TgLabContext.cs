@@ -5,6 +5,8 @@ namespace TgLab.Infrastructure.Context
 {
     public partial class TgLabContext : DbContext
     {
+        public TgLabContext() { }
+
         public TgLabContext(DbContextOptions<TgLabContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }

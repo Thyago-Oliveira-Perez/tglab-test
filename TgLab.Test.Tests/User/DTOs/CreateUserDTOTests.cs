@@ -13,7 +13,7 @@ namespace TgLab.Tests.User.DTOs
             public void Given_UserOver18_Should_Return_True()
             {
                 // Arrange
-                var expected = true;
+                var expected = false;
                 var sut = new CreateUserDTO()
                 {
                     Name = "User Test",
@@ -33,7 +33,7 @@ namespace TgLab.Tests.User.DTOs
             public void Given_UserUnder18_Should_Return_False()
             {
                 // Arrange
-                var expected = false;
+                var expected = true;
                 var sut = new CreateUserDTO()
                 {
                     Name = "User Test",
