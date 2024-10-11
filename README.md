@@ -37,3 +37,31 @@ Este projeto é uma API RESTful desenvolvida em C# (.NET 6) para gerenciar as tr
 ## Requisitos
 
 - **.NET 6**
+
+## Migrations
+
+### Adicionar
+
+```
+ADD-MIGRATION [nome_migration]
+```
+
+### Aplicar
+
+```
+UPDATE-DATABASE
+```
+
+### Remover
+
+```
+Remove-Migration
+```
+
+- Esse comendo remove a migration mais recente
+
+### Reverter o banco para uma migration especifica
+
+```
+Update-database [nome_migration]
+```
