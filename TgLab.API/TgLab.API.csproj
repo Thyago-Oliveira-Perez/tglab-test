@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TgLab.Application\TgLab.Application.csproj" />
     <ProjectReference Include="..\TgLab.Infrastructure\TgLab.Infrastructure.csproj" />
   </ItemGroup>
 

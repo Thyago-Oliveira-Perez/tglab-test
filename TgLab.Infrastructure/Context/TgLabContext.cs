@@ -9,7 +9,7 @@ namespace TgLab.Infrastructure.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
-        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Bet> Bets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

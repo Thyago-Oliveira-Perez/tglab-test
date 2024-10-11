@@ -2,7 +2,7 @@
 
 namespace TgLab.Domain.Models
 {
-    public class Transactions
+    public class Transaction
     {
         public int Id { get; set; }
         public int WalletId { get; set; }

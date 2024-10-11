@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Infrastructure", "TgL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Domain", "TgLab.Domain\TgLab.Domain.csproj", "{0B6E3B70-0227-4310-8CE9-FAFD1CA13151}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Test.Tests", "TgLab.Test.Tests\TgLab.Test.Tests.csproj", "{029B7DE9-7CA8-4F78-A05D-2CDC80D64C9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Tests", "TgLab.Test.Tests\TgLab.Tests.csproj", "{029B7DE9-7CA8-4F78-A05D-2CDC80D64C9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Application", "TgLab.Application\TgLab.Application.csproj", "{3629E070-22F7-48F8-9FE3-1C058034C559}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{029B7DE9-7CA8-4F78-A05D-2CDC80D64C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{029B7DE9-7CA8-4F78-A05D-2CDC80D64C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{029B7DE9-7CA8-4F78-A05D-2CDC80D64C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3629E070-22F7-48F8-9FE3-1C058034C559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3629E070-22F7-48F8-9FE3-1C058034C559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3629E070-22F7-48F8-9FE3-1C058034C559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3629E070-22F7-48F8-9FE3-1C058034C559}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
