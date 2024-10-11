@@ -23,7 +23,7 @@ namespace TgLab.Tests.User.DTOs
                 };
 
                 // Act
-                var actual = sut.IsAdult();
+                var actual = sut.IsUnder18();
 
                 // Assert
                 Assert.That(expected == actual,"User is Adult");
@@ -43,7 +43,7 @@ namespace TgLab.Tests.User.DTOs
                 };
 
                 // Act
-                var actual = sut.IsAdult();
+                var actual = sut.IsUnder18();
 
                 // Assert
                 Assert.That(expected == actual, "User is Adult");

@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
+using TgLab.Application.User.Interfaces;
+using TgLab.Application.User.Services;
 using TgLab.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddControllers();
 

@@ -12,8 +12,8 @@ namespace TgLab.Application.User.DTOs
         public string Password { get; set; }
         [Required]
         public DateTime BirthDate { get; set; }
-    
-        public bool IsAdult()
+
+        public bool IsUnder18()
         {
             var today = DateTime.Today;
             var age = today.Year - this.BirthDate.Year;
@@ -24,7 +24,7 @@ namespace TgLab.Application.User.DTOs
                 age--;
             }
 
-            return age >= 18;
+            return age < 18;
         }
     }
 }

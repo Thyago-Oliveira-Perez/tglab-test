@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TgLab.Domain\TgLab.Domain.csproj" />
+    <ProjectReference Include="..\TgLab.Infrastructure\TgLab.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
