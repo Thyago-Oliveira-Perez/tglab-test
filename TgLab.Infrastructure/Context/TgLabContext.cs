@@ -12,10 +12,14 @@ namespace TgLab.Infrastructure.Context
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<Bet> Bets { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder model)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            model.ApplyConfigurationsFromAssembly(typeof(TgLabContext).Assembly);
-            base.OnModelCreating(model);
+            modelBuilder.Entity<User>(entity => {
+                entity.HasKey(k => k.Id);
+                entity.HasIndex(k => k.Email).IsUnique();
+            });
+
+            base.OnModelCreating(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
