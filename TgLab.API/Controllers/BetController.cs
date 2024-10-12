@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TgLab.Application.Bet.DTOs;
@@ -44,10 +43,27 @@ namespace TgLab.API.Controllers
             }
         }
 
-        [HttpPost("Cancel")]
-        public bool Cancel()
+        [HttpPost("Cancel/{id}")]
+        public async Task<IActionResult> Cancel(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                await _service.Cancel(id, userEmail);
+
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError($"[{nameof(Cancel)}] Invalid request: {ex.Message}", ex);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"[{nameof(Cancel)}] Error trying to cancel bet: {ex.Message}", ex);
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         [HttpGet("List/{walletId}")]
@@ -68,7 +84,7 @@ namespace TgLab.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"[{nameof(ListBetsByWalletId)}] Error trying to list bets: {ex.Message}", ex);
+                _logger.LogError($"[{nameof(ListBetsByWalletId)}] Error trying to list bets by wallet: {ex.Message}", ex);
                 return StatusCode(500, "Internal server error.");
             }
         }

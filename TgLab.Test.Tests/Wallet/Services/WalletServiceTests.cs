@@ -23,6 +23,13 @@ namespace TgLab.Tests.User.Services
             _walletService = new WalletService(_context);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public void Given_Default_Should_Create_Wallet()
         {

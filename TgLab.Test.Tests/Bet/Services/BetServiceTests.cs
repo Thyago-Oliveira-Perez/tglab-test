@@ -38,6 +38,13 @@ namespace TgLab.Tests.Bet.Services
             _betService = new BetService(_context, _userService);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public async Task Given_Default_Should_Decrease_User_Balance()
         {
@@ -69,7 +76,7 @@ namespace TgLab.Tests.Bet.Services
             user = _context.Users.FirstOrDefault(u => u.Email == userDto.Email);
 
             // Assert
-            Assert.That(user.Wallets.First().Balance == expected);
+            Assert.That(user.Wallets.First().Balance, Is.EqualTo(expected));
         }
 
         [Test]
@@ -208,6 +215,43 @@ namespace TgLab.Tests.Bet.Services
 
             // Assert
             Assert.That(actual.Count() > 0, "There is bets in the database");
+        }
+
+        [Test]
+        public async Task Given_Default_Should_Cancel_A_Bet_Based_On_Id()
+        {
+            // Arrange
+            var userDto = new CreateUserDTO
+            {
+                Name = "Test Login User",
+                Email = "test@login.com",
+                Password = "test*login*password",
+                BirthDate = DateTime.Now.AddYears(-20)
+            };
+
+            await _userService.Create(userDto);
+
+            var user = _context.Users
+                .Include(u => u.Wallets)
+                .First(u => u.Email == userDto.Email);
+
+            var walletId = user.Wallets.First().Id;
+
+            var gamble1 = new CreateGambleDTO()
+            {
+                WalletId = walletId,
+                Amount = 10
+            };
+
+            // Act
+            await _betService.Create(gamble1, user.Email);
+
+            await _betService.Cancel(1, user.Email);
+
+            var actual = _context.Bets.FirstOrDefault(b => b.Id == 1);
+
+            // Assert
+            Assert.That(actual.Stage == BetStage.CANCELLED, "There is bets in the database");
         }
     }
 }

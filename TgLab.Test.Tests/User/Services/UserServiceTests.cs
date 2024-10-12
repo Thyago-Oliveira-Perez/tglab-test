@@ -32,6 +32,13 @@ namespace TgLab.Tests.User.Services
             _userService = new UserService(_context, _walletService, _cryptService);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public void Given_WhenUserIsUnder18_Should_Return_Exception()
         {

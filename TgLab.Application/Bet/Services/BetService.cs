@@ -103,6 +103,29 @@ namespace TgLab.Application.Bet.Services
                 .ToList();
         }
 
+        public async Task Cancel(int id, string userEmail)
+        {
+            var user = await _userService.GetUserAndWalletsByEmail(userEmail);
+
+            ArgumentNullException.ThrowIfNull(user);
+
+            var walletIds = user.Wallets.Select(w => w.Id);
+
+            var bet = _context.Bets.FirstOrDefault(b => b.Id == id);
+
+            ArgumentNullException.ThrowIfNull(bet);
+
+            if (!walletIds.Contains(bet.WalletId))
+            {
+                throw new ArgumentException($"[{Cancel}] Invalid bet");
+            }
+
+            bet.Stage = BetStage.CANCELLED;
+
+            _context.Bets.Update(bet);
+            _context.SaveChanges();
+        }
+
         public bool InvalidBet(CreateGambleDTO bet, WalletDb wallet)
         {
             return bet.Amount < 0 || bet.Amount < MinBet || wallet.Balance < bet.Amount;

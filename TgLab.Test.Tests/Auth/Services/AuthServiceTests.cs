@@ -45,6 +45,13 @@ namespace TgLab.Tests.Auth.Services
             _authService = new AuthService(_context, _configuration, _cryptService);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public async Task Given_Default_Should_Login()
         {
