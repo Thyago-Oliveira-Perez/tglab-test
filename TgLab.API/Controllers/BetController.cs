@@ -72,5 +72,28 @@ namespace TgLab.API.Controllers
                 return StatusCode(500, "Internal server error.");
             }
         }
+
+        [HttpGet("List")]
+        public async Task<ActionResult<IEnumerable<BetDTO>>> ListAll()
+        {
+            try
+            {
+                string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var result = await _service.ListAll(userEmail);
+
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError($"[{nameof(ListAll)}] Invalid request: {ex.Message}", ex);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"[{nameof(ListAll)}] Error trying to list bets: {ex.Message}", ex);
+                return StatusCode(500, "Internal server error.");
+            }
+        }
     }
 }

@@ -127,7 +127,7 @@ namespace TgLab.Tests.Bet.Services
         }
 
         [Test]
-        public async Task Given_Default_Should_Return_List_Of_Bets()
+        public async Task Given_Default_Should_Return_List_Of_Bets_Based_On_WalletId()
         {
             // Arrange
             var userDto = new CreateUserDTO
@@ -163,6 +163,48 @@ namespace TgLab.Tests.Bet.Services
             await _betService.Create(gamble2, user.Email);
 
             var actual = await _betService.ListBetsByWalletId(walletId, user.Email);
+
+            // Assert
+            Assert.That(actual.Count() > 0, "There is bets in the database");
+        }
+
+        [Test]
+        public async Task Given_Default_Should_Return_All_Bets()
+        {
+            // Arrange
+            var userDto = new CreateUserDTO
+            {
+                Name = "Test Login User",
+                Email = "test@login.com",
+                Password = "test*login*password",
+                BirthDate = DateTime.Now.AddYears(-20)
+            };
+
+            await _userService.Create(userDto);
+
+            var user = _context.Users
+                .Include(u => u.Wallets)
+                .First(u => u.Email == userDto.Email);
+
+            var walletId = user.Wallets.First().Id;
+
+            var gamble1 = new CreateGambleDTO()
+            {
+                WalletId = walletId,
+                Amount = 10
+            };
+
+            var gamble2 = new CreateGambleDTO()
+            {
+                WalletId = walletId,
+                Amount = 20
+            };
+
+            // Act
+            await _betService.Create(gamble1, user.Email);
+            await _betService.Create(gamble2, user.Email);
+
+            var actual = await _betService.ListAll(user.Email);
 
             // Assert
             Assert.That(actual.Count() > 0, "There is bets in the database");

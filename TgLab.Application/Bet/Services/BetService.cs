@@ -67,6 +67,34 @@ namespace TgLab.Application.Bet.Services
                 .Select(b => new BetDTO()
                 {
                     Id = b.Id,
+                    Currency = wallet.Currency,
+                    Amount = b.Amount,
+                    Stage = b.Stage,
+                    Bounty = b.Bounty,
+                    Time = b.Time
+                })
+                .ToList();
+        }
+
+        public async Task<IEnumerable<BetDTO>> ListAll(string userEmail)
+        {
+            var user = await _userService.GetUserAndWalletsByEmail(userEmail);
+
+            ArgumentNullException.ThrowIfNull(user);
+
+            var wallet = user.Wallets.SingleOrDefault(w => w.UserId == user.Id);
+
+            ArgumentNullException.ThrowIfNull(wallet);
+
+            var walletIds = user.Wallets.Select(w => w.Id);
+
+            return _context.Bets
+                .Where(b => walletIds.Contains(b.WalletId))
+                .AsNoTracking()
+                .Select(b => new BetDTO()
+                {
+                    Id = b.Id,
+                    Currency = wallet.Currency,
                     Amount = b.Amount,
                     Stage = b.Stage,
                     Bounty = b.Bounty,
