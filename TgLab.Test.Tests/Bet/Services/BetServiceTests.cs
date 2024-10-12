@@ -214,7 +214,7 @@ namespace TgLab.Tests.Bet.Services
             var actual = await _betService.ListAll(user.Email);
 
             // Assert
-            Assert.That(actual.Count() > 0, "There is bets in the database");
+            Assert.That(actual.Count() > 0, "There are bets in the database");
         }
 
         [Test]
@@ -251,7 +251,7 @@ namespace TgLab.Tests.Bet.Services
             var actual = _context.Bets.FirstOrDefault(b => b.Id == 1);
 
             // Assert
-            Assert.That(actual.Stage == BetStage.CANCELLED, "There is bets in the database");
+            Assert.That(actual.Stage == BetStage.CANCELLED, "There are bets in the database");
         }
     }
 }
