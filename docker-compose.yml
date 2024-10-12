@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  rest-api:
+    container_name: tglab_rest_api
+    build:
+      context: .
+      dockerfile: ./BackEnd/TgLab.API/Dockerfile
+    ports:
+      - "8080:80"
+      - "8081:443"
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: tglab_database

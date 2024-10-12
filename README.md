@@ -58,10 +58,27 @@ UPDATE-DATABASE
 Remove-Migration
 ```
 
-- Esse comendo remove a migration mais recente
+- Esse comando remove a migration mais recente
 
 ### Reverter o banco para uma migration especifica
 
 ```
 Update-database [nome_migration]
+```
+
+## Docker
+
+Para executar o projeto na docker completamente devemos primeiro criar um certificado ssl.
+
+```
+dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p
+dotnet dev-certs https --trust
+```
+
+- ref: https://learn.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-8.0
+
+Feito isso podemos subir os serviços com o seguinte comando:
+
+```
+docker-compose up -d
 ```

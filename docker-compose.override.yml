@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  rest-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Pass@*****
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ConnectionStrings__DefaultConnection=Server=tglab_database;Database=tglab;User Id=sa;Password=strong*password;
+      - Jwt__Key=D@2$3fF6h8^uGhY!9jKlM12#NqRzT*6Y
+      - Jwt__Issuer=TgLab.Test.Application
+      - Logging__LogLevel__Default=Information
+      - Logging__LogLevel__Microsoft=Warning
+      - AllowedHosts=*

@@ -8,10 +8,13 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["TgLab.API/TgLab.API.csproj", "TgLab.API/"]
+COPY ["BackEnd/TgLab.API/TgLab.API.csproj", "TgLab.API/"]
+COPY ["BackEnd/TgLab.Application/TgLab.Application.csproj", "TgLab.Application/"]
+COPY ["BackEnd/TgLab.Domain/TgLab.Domain.csproj", "TgLab.Domain/"]
+COPY ["BackEnd/TgLab.Infrastructure/TgLab.Infrastructure.csproj", "TgLab.Infrastructure/"]
 RUN dotnet restore "./TgLab.API/./TgLab.API.csproj"
 COPY . .
-WORKDIR "/src/TgLab.API"
+WORKDIR "/src/BackEnd/TgLab.API"
 RUN dotnet build "./TgLab.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
