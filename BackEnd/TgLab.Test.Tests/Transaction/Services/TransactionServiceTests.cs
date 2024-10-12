@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
-using TgLab.Application.Bet.DTOs;
-using TgLab.Application.Bet.Interfaces;
-using TgLab.Application.Bet.Services;
 using TgLab.Application.Transaction.Interfaces;
 using TgLab.Application.Transaction.Services;
-using TgLab.Application.User.DTOs;
+using TgLab.Domain.DTOs.User;
 using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
 using TgLab.Application.Wallet.Interfaces;

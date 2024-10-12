@@ -1,4 +1,4 @@
-﻿using TgLab.Application.Wallet.DTOs;
+﻿using TgLab.Domain.DTOs.Wallet;
 
 namespace TgLab.Application.Wallet.Interfaces
 {

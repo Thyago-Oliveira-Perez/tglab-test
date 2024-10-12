@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TgLab.Application.Wallet.Services;
 using TgLab.Application.Wallet.Interfaces;
-using TgLab.Application.Wallet.DTOs;
+using TgLab.Domain.DTOs.Wallet;
 
 namespace TgLab.Tests.User.Services
 {

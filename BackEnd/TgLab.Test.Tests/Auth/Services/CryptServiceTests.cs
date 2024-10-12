@@ -1,7 +1,4 @@
-﻿using TgLab.Application.Auth.DTOs;
-using TgLab.Application.Auth.Interfaces;
-using TgLab.Application.Auth.Services;
-using TgLab.Application.User.DTOs;
+﻿using TgLab.Application.Auth.Services;
 
 namespace TgLab.Tests.Auth.Services
 {

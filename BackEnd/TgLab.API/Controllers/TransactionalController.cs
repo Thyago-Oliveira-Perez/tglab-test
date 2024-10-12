@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TgLab.Application.Bet.DTOs;
 using TgLab.Application.Transaction.Interfaces;
+using TgLab.Domain.DTOs;
+using TgLab.Domain.DTOs.Transaction;
 
 namespace TgLab.API.Controllers
 {
@@ -21,13 +22,13 @@ namespace TgLab.API.Controllers
         }
 
         [HttpGet("List/{walletId}")]
-        public async Task<ActionResult<IEnumerable<BetDTO>>> ListTransactionsByWalletId(int walletId)
+        public async Task<ActionResult<ApiResponse>> ListTransactionsByWalletId(int walletId, int pageIndex = 1, int pageSize = 10)
         {
             try
             {
                 string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                var result = await _service.ListTransactionsByWalletId(walletId, userEmail);
+                var result = await _service.ListTransactionsByWalletId(walletId, userEmail, pageIndex, pageSize);
 
                 return Ok(result);
             }
@@ -44,13 +45,13 @@ namespace TgLab.API.Controllers
         }
 
         [HttpGet("List")]
-        public async Task<ActionResult<IEnumerable<BetDTO>>> ListAll()
+        public async Task<ActionResult<ApiResponse>> ListAll(int pageIndex = 1, int pageSize = 10)
         {
             try
             {
                 string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                var result = await _service.ListAll(userEmail);
+                var result = await _service.ListAll(userEmail, pageIndex, pageSize);
 
                 return Ok(result);
             }

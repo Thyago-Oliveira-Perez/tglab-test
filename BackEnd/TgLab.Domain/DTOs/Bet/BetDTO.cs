@@ -1,6 +1,6 @@
 ﻿using TgLab.Domain.Enums;
 
-namespace TgLab.Application.Bet.DTOs
+namespace TgLab.Domain.DTOs.Bet
 {
     public class BetDTO
     {

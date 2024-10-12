@@ -1,6 +1,6 @@
-﻿using TgLab.Application.Wallet.DTOs;
+﻿using TgLab.Domain.DTOs.Wallet;
 
-namespace TgLab.Application.User.DTOs
+namespace TgLab.Domain.DTOs.User
 {
     public class UserDTO
     {

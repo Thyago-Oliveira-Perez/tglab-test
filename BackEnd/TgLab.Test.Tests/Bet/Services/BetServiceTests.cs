@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Threading;
-using System;
 using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
-using TgLab.Application.Bet.DTOs;
 using TgLab.Application.Bet.Interfaces;
 using TgLab.Application.Bet.Services;
 using TgLab.Application.Game;
-using TgLab.Application.User.DTOs;
 using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
 using TgLab.Application.Wallet.Interfaces;
@@ -17,6 +13,8 @@ using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
 using WalletDb = TgLab.Domain.Models.Wallet;
+using TgLab.Domain.DTOs.User;
+using TgLab.Domain.DTOs.Bet;
 
 namespace TgLab.Tests.Bet.Services
 {

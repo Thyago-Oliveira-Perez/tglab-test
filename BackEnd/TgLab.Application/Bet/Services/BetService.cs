@@ -1,5 +1,4 @@
-﻿using TgLab.Application.Bet.DTOs;
-using TgLab.Application.Bet.Interfaces;
+﻿using TgLab.Application.Bet.Interfaces;
 using TgLab.Infrastructure.Context;
 using TgLab.Application.User.Interfaces;
 using BetDb = TgLab.Domain.Models.Bet;
@@ -8,6 +7,8 @@ using TgLab.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Game;
+using TgLab.Domain.DTOs.Bet;
+using TgLab.Domain.DTOs;
 
 namespace TgLab.Application.Bet.Services
 {
@@ -59,7 +60,7 @@ namespace TgLab.Application.Bet.Services
             _walletService.DecreaseBalance(dto.WalletId, dto.Amount);
         }
 
-        public async Task<IEnumerable<BetDTO>> ListBetsByWalletId(int walletId, string userEmail)
+        public async Task<PaginatedList<BetDTO>> ListBetsByWalletId(int walletId, string userEmail, int pageIndex, int pageSize)
         {
             var user = await _userService.GetUserAndWalletsByEmail(userEmail);
 
@@ -69,7 +70,7 @@ namespace TgLab.Application.Bet.Services
             
             ArgumentNullException.ThrowIfNull(wallet);
 
-            return _context.Bets
+            var bets = _context.Bets
                 .Where(b => b.WalletId == walletId)
                 .AsNoTracking()
                 .Select(b => new BetDTO()
@@ -81,10 +82,18 @@ namespace TgLab.Application.Bet.Services
                     Bounty = b.Bounty,
                     Time = b.Time
                 })
+                .OrderBy(b => b.Id)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
+
+            var count = await _context.Bets.CountAsync();
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            return new PaginatedList<BetDTO>(bets, pageIndex, totalPages);
         }
 
-        public async Task<IEnumerable<BetDTO>> ListAll(string userEmail)
+        public async Task<PaginatedList<BetDTO>> ListAll(string userEmail, int pageIndex, int pageSize)
         {
             var user = await _userService.GetUserAndWalletsByEmail(userEmail);
 
@@ -96,7 +105,7 @@ namespace TgLab.Application.Bet.Services
 
             var walletIds = user.Wallets.Select(w => w.Id);
 
-            return _context.Bets
+            var bets = _context.Bets
                 .Where(b => walletIds.Contains(b.WalletId))
                 .AsNoTracking()
                 .Select(b => new BetDTO()
@@ -108,7 +117,15 @@ namespace TgLab.Application.Bet.Services
                     Bounty = b.Bounty,
                     Time = b.Time
                 })
+                .OrderBy(b => b.Id)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
+
+            var count = await _context.Bets.CountAsync();
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            return new PaginatedList<BetDTO>(bets, pageIndex, totalPages);
         }
 
         public async Task Cancel(int id, string userEmail)

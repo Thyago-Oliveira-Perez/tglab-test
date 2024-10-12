@@ -1,4 +1,4 @@
-﻿using TgLab.Application.User.DTOs;
+﻿using TgLab.Domain.DTOs.User;
 using UserDb = TgLab.Domain.Models.User;
 
 namespace TgLab.Application.User.Interfaces

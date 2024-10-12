@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TgLab.Application.Auth.DTOs;
+using TgLab.Domain.Auth;
 using TgLab.Application.Auth.Interfaces;
 
 namespace TgLab.API.Controllers

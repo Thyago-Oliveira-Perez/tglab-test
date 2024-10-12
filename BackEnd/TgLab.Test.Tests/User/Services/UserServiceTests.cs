@@ -1,4 +1,4 @@
-﻿using TgLab.Application.User.DTOs;
+﻿using TgLab.Domain.DTOs.User;
 using TgLab.Application.User.Exceptions;
 using TgLab.Application.User.Services;
 using TgLab.Infrastructure.Context;

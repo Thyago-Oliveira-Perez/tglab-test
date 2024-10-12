@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TgLab.Application.User.DTOs
+namespace TgLab.Domain.DTOs.User
 {
     public class CreateUserDTO
     {

@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using TgLab.Application.Auth.DTOs;
 using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
-using TgLab.Application.User.DTOs;
+using TgLab.Domain.DTOs.User;
 using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
 using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Wallet.Services;
 using TgLab.Infrastructure.Context;
+using TgLab.Domain.Auth;
 
 namespace TgLab.Tests.Auth.Services
 {

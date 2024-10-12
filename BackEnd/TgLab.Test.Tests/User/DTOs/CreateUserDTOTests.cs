@@ -1,4 +1,4 @@
-using TgLab.Application.User.DTOs;
+using TgLab.Domain.DTOs.User;
 
 namespace TgLab.Tests.User.DTOs
 {

@@ -5,10 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TgLab.Application.Auth.DTOs;
+using TgLab.Domain.Auth;
 using TgLab.Application.Auth.Interfaces;
-using TgLab.Application.User.DTOs;
-using TgLab.Application.Wallet.DTOs;
+using TgLab.Domain.DTOs.User;
+using TgLab.Domain.DTOs.Wallet;
 using TgLab.Infrastructure.Context;
 
 namespace TgLab.Application.Auth.Services

@@ -1,7 +1,7 @@
-﻿using TgLab.Application.User.DTOs;
-using TgLab.Application.Wallet.DTOs;
+﻿using TgLab.Domain.DTOs.User;
+using TgLab.Domain.DTOs.Wallet;
 
-namespace TgLab.Application.Auth.DTOs
+namespace TgLab.Domain.Auth
 {
     public class LoggedUserDTO
     {

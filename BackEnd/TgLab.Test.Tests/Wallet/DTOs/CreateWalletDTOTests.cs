@@ -1,5 +1,4 @@
-﻿using TgLab.Application.User.DTOs;
-using TgLab.Application.Wallet.DTOs;
+﻿using TgLab.Domain.DTOs.Wallet;
 using TgLab.Domain.Enums;
 
 namespace TgLab.Tests.Wallet.DTOs

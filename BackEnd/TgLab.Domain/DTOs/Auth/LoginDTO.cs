@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TgLab.Application.Auth.DTOs
+namespace TgLab.Domain.Auth
 {
     public class LoginDTO
     {

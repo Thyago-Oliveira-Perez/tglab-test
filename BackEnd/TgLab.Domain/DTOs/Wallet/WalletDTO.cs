@@ -1,6 +1,6 @@
 ﻿using TgLab.Domain.Enums;
 
-namespace TgLab.Application.Wallet.DTOs
+namespace TgLab.Domain.DTOs.Wallet
 {
     public class WalletDTO
     {

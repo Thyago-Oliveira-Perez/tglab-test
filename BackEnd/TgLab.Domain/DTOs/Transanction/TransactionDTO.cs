@@ -1,6 +1,6 @@
 ﻿using TgLab.Domain.Enums;
 
-namespace TgLab.Application.Transaction.DTOs
+namespace TgLab.Domain.DTOs.Transaction
 {
     public class TransactionDTO
     {

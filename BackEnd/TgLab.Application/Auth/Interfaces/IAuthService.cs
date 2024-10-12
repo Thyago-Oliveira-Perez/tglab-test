@@ -1,4 +1,4 @@
-﻿using TgLab.Application.Auth.DTOs;
+﻿using TgLab.Domain.Auth;
 
 namespace TgLab.Application.Auth.Interfaces
 {

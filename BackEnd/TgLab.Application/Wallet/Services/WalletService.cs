@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TgLab.Application.Wallet.DTOs;
+using TgLab.Domain.DTOs.Wallet;
 using TgLab.Application.Wallet.Interfaces;
 using TgLab.Infrastructure.Context;
 using WalletDb = TgLab.Domain.Models.Wallet;
