@@ -18,7 +18,7 @@ namespace TgLab.API.Controllers
         }
 
         [HttpPost("Create")]
-        public IActionResult CreateUser(CreateUserDTO dto)
+        public IActionResult CreateUser([FromBody] CreateUserDTO dto)
         {
             try
             {

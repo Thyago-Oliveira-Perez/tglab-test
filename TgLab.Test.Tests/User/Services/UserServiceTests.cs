@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using TgLab.Application.Wallet.Services;
 using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.User.Interfaces;
+using TgLab.Application.Auth.Interfaces;
+using TgLab.Application.Auth.Services;
 
 namespace TgLab.Tests.User.Services
 {
@@ -15,6 +17,7 @@ namespace TgLab.Tests.User.Services
         private TgLabContext _context;
         private IUserService _userService;
         private IWalletService _walletService;
+        private ICryptService _cryptService;
 
         [SetUp]
         public void SetUp()
@@ -25,7 +28,8 @@ namespace TgLab.Tests.User.Services
 
             _context = new TgLabContext(options);
             _walletService = new WalletService(_context);
-            _userService = new UserService(_context, _walletService);
+            _cryptService = new CryptService();
+            _userService = new UserService(_context, _walletService, _cryptService);
         }
 
         [Test]
