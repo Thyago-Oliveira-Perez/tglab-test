@@ -34,11 +34,11 @@ namespace TgLab.Tests.User.Services
         public void Given_Default_Should_Create_Wallet()
         {
             // Arrange
-            var userId = 1;
-            var wallet = new CreateWalletDTO().CreateDefaultWallet(userId);
+            var userEmail = "test@email.com";
+            var wallet = new CreateWalletDTO().CreateDefaultWallet();
 
             // Act
-            var addedWallet = _walletService.Create(wallet);
+            var addedWallet = _walletService.Create(wallet, userEmail);
 
             // Assert
             Assert.IsNotNull(addedWallet);

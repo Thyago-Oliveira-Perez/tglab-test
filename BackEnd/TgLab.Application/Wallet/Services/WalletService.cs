@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TgLab.Domain.DTOs.Wallet;
+﻿using TgLab.Domain.DTOs.Wallet;
 using TgLab.Application.Wallet.Interfaces;
 using TgLab.Infrastructure.Context;
 using WalletDb = TgLab.Domain.Models.Wallet;
@@ -15,19 +14,21 @@ namespace TgLab.Application.Wallet.Services
             _context = context;
         }
 
-        public Task Create(CreateWalletDTO dto)
+        public async Task Create(CreateWalletDTO dto, string userEmail)
         {
+            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
+
+            ArgumentNullException.ThrowIfNull(user);
+
             var wallet = new WalletDb()
             {
-                UserId = dto.UserId,
+                UserId = user.Id,
                 Currency = dto.Currency,
                 Balance = dto.Balance,
             };
 
             _context.Wallets.Add(wallet);
             _context.SaveChanges();
-
-            return Task.CompletedTask;
         }
 
         public Task DecreaseBalance(int Id, decimal amount)

@@ -1,31 +1,33 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TgLab.Domain.DTOs.User;
-using TgLab.Application.User.Interfaces;
+using System.Security.Claims;
+using TgLab.Application.Wallet.Interfaces;
+using TgLab.Domain.DTOs.Wallet;
 
 namespace TgLab.API.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("User")]
-    public class UserController : Controller
+    [Route("Wallet")]
+    public class WalletController : Controller
     {
-        private readonly ILogger<UserController> _logger;
-        private readonly IUserService _service;
+        private readonly ILogger<WalletController> _logger;
+        private readonly IWalletService _service;
 
-        public UserController(ILogger<UserController> logger, IUserService service)
+        public WalletController(ILogger<WalletController> logger, IWalletService service)
         {
             _logger = logger;
             _service = service;
         }
 
-        [AllowAnonymous]
         [HttpPost("Create")]
-        public IActionResult Create([FromBody] CreateUserDTO dto)
+        public IActionResult Create([FromBody] CreateWalletDTO dto)
         {
             try
             {
-                var result = _service.Create(dto);
+                string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var result = _service.Create(dto, userEmail);
 
                 if (result.IsCompleted)
                 {
@@ -33,7 +35,7 @@ namespace TgLab.API.Controllers
                 }
                 else
                 {
-                    return BadRequest("User creation failed.");
+                    return BadRequest("Wallet creation failed.");
                 }
             }
             catch (ArgumentException ex)
@@ -43,7 +45,7 @@ namespace TgLab.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"[{nameof(Create)}] Error trying to create user: {ex.Message}", ex);
+                _logger.LogError($"[{nameof(Create)}] Error trying to create wallet: {ex.Message}", ex);
                 return StatusCode(500, "Internal server error.");
             }
         }

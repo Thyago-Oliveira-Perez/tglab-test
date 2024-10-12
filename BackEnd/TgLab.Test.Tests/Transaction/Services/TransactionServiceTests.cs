@@ -86,10 +86,10 @@ namespace TgLab.Tests.Transaction.Services
             _context.Transactions.AddRange(transactions);
             _context.SaveChanges();
 
-            var actual = await _transactionalService.ListAll(user.Email);
+            var actual = await _transactionalService.ListAll(user.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Count(), Is.GreaterThan(0), "There are transactions in the database");
+            Assert.That(actual.Items.Count(), Is.GreaterThan(0), "There are transactions in the database");
         }
 
         [Test]
@@ -162,10 +162,10 @@ namespace TgLab.Tests.Transaction.Services
             _context.Transactions.AddRange(transactionsUser1);
             _context.SaveChanges();
 
-            var actual = await _transactionalService.ListTransactionsByWalletId(walletId, user0.Email);
+            var actual = await _transactionalService.ListTransactionsByWalletId(walletId, user0.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Count(), Is.EqualTo(transactionsUser0.Count), "There are transactionsin the database");
+            Assert.That(actual.Items.Count(), Is.EqualTo(transactionsUser0.Count), "There are transactionsin the database");
         }
     }
 }

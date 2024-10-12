@@ -197,10 +197,10 @@ namespace TgLab.Tests.Bet.Services
             await _betService.Create(gamble1, user.Email);
             await _betService.Create(gamble2, user.Email);
 
-            var actual = await _betService.ListBetsByWalletId(walletId, user.Email);
+            var actual = await _betService.ListBetsByWalletId(walletId, user.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Count(), Is.GreaterThan(0), "There is bets in the database");
+            Assert.That(actual.Items.Count(), Is.GreaterThan(0), "There is bets in the database");
         }
 
         [Test]
@@ -239,10 +239,10 @@ namespace TgLab.Tests.Bet.Services
             await _betService.Create(gamble1, user.Email);
             await _betService.Create(gamble2, user.Email);
 
-            var actual = await _betService.ListAll(user.Email);
+            var actual = await _betService.ListAll(user.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Count(), Is.GreaterThan(0), "There are bets in the database");
+            Assert.That(actual.Items.Count(), Is.GreaterThan(0), "There are bets in the database");
         }
 
         [Test]

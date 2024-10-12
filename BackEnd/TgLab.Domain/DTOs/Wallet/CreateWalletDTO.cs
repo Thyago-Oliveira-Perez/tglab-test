@@ -4,13 +4,11 @@ namespace TgLab.Domain.DTOs.Wallet
 {
     public class CreateWalletDTO
     {
-        public int UserId { get; set; }
         public int Balance { get; set; }
         public Currency Currency { get; set; }
 
-        public CreateWalletDTO CreateDefaultWallet(int userId)
+        public CreateWalletDTO CreateDefaultWallet()
         {
-            this.UserId = userId;
             this.Balance = 100;
             this.Currency = Currency.BRL;
 

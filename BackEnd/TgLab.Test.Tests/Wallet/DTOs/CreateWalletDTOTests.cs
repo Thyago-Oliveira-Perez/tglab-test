@@ -19,7 +19,7 @@ namespace TgLab.Tests.Wallet.DTOs
                 var sut = new CreateWalletDTO();
 
                 // Act
-                var actual = sut.CreateDefaultWallet(userId);
+                var actual = sut.CreateDefaultWallet();
 
                 // Assert
                 Assert.That(expectedCurrency == actual.Currency, "Currency should be set to BRL.");
@@ -35,7 +35,7 @@ namespace TgLab.Tests.Wallet.DTOs
                 var sut = new CreateWalletDTO();
 
                 // Act
-                var actual = sut.CreateDefaultWallet(userId);
+                var actual = sut.CreateDefaultWallet();
 
                 // Assert
                 Assert.That(expectedBalance == actual.Balance, "Balance should be set to 100.");

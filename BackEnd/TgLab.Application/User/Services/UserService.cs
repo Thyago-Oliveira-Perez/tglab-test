@@ -30,6 +30,15 @@ namespace TgLab.Application.User.Services
                 throw new Under18Exception();
             }
 
+            var alreadyExists = _context.Users
+                .AsNoTracking()
+                .Any(u => u.Email == dto.Email);
+
+            if (alreadyExists)
+            {
+                throw new DuplicatedEmail();
+            }
+
             var user = new UserDb()
             {
                 Name = dto.Name,
@@ -41,9 +50,9 @@ namespace TgLab.Application.User.Services
             var addedUser = _context.Users.Add(user);
             _context.SaveChanges();
 
-            var defaultWallet = new CreateWalletDTO().CreateDefaultWallet(addedUser.Entity.Id);
+            var defaultWallet = new CreateWalletDTO().CreateDefaultWallet();
 
-            _walletService.Create(defaultWallet);
+            _walletService.Create(defaultWallet, addedUser.Entity.Email);
 
             return Task.CompletedTask;
         }
