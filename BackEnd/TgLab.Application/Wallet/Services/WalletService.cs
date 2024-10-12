@@ -30,7 +30,7 @@ namespace TgLab.Application.Wallet.Services
             return Task.CompletedTask;
         }
 
-        public Task DecreaseBalance(int Id, int amount)
+        public Task DecreaseBalance(int Id, decimal amount)
         {
             var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
 
@@ -43,7 +43,7 @@ namespace TgLab.Application.Wallet.Services
             return Task.CompletedTask;
         }
 
-        public Task IncreaseBalance(int Id, int bounty)
+        public Task IncreaseBalance(int Id, decimal bounty)
         {
             var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TgLab.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using TgLab.Infrastructure.Context;
 namespace TgLab.Infrastructure.Migrations
 {
     [DbContext(typeof(TgLabContext))]
-    partial class TgLabContextModelSnapshot : ModelSnapshot
+    [Migration("20241012151057_Update-Money-Types")]
+    partial class UpdateMoneyTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

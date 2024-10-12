@@ -68,7 +68,7 @@ namespace TgLab.Application.Game
             return new Random().Next(2) == 0;
         }
 
-        private static int CalcBounty(int amount)
+        private static decimal CalcBounty(decimal amount)
         {
             return amount * 2;
         }

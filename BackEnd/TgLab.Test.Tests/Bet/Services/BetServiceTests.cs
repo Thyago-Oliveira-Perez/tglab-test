@@ -1,9 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System.Threading;
+using System;
 using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
 using TgLab.Application.Bet.DTOs;
 using TgLab.Application.Bet.Interfaces;
 using TgLab.Application.Bet.Services;
+using TgLab.Application.Game;
 using TgLab.Application.User.DTOs;
 using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
@@ -23,6 +28,11 @@ namespace TgLab.Tests.Bet.Services
         private IWalletService _walletService;
         private ICryptService _cryptService;
         private IBetService _betService;
+        private ILogger<BetService> _logger;
+        private IServiceScopeFactory _scopeFactory;
+        private IServiceProvider _serviceProvider;
+        private GameService _gameService;
+        private CancellationTokenSource _cancellationTokenSource;
 
         [SetUp]
         public void SetUp()
@@ -35,7 +45,26 @@ namespace TgLab.Tests.Bet.Services
             _walletService = new WalletService(_context);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
-            _betService = new BetService(_context, _userService);
+
+            // Configurando o logger
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            _logger = loggerFactory.CreateLogger<BetService>();
+
+            // Configuração do IServiceProvider e IServiceScopeFactory
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton(_context);
+            serviceCollection.AddTransient<IUserService, UserService>();
+            serviceCollection.AddTransient<IWalletService, WalletService>();
+            serviceCollection.AddTransient<ICryptService, CryptService>();
+            _serviceProvider = serviceCollection.BuildServiceProvider();
+            _scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
+
+            // Inicializando o GameService e o BetService
+            _gameService = new GameService(_logger, _scopeFactory);
+            _betService = new BetService(_context, _userService, _walletService, _gameService);
+
+            // CancellationToken para parar o serviço de background após cada teste
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         [TearDown]
@@ -43,6 +72,7 @@ namespace TgLab.Tests.Bet.Services
         {
             _context.Database.EnsureDeleted();
             _context.Dispose();
+            _cancellationTokenSource.Cancel();
         }
 
         [Test]
@@ -172,7 +202,7 @@ namespace TgLab.Tests.Bet.Services
             var actual = await _betService.ListBetsByWalletId(walletId, user.Email);
 
             // Assert
-            Assert.That(actual.Count() > 0, "There is bets in the database");
+            Assert.That(actual.Count(), Is.GreaterThan(0), "There is bets in the database");
         }
 
         [Test]
@@ -214,7 +244,7 @@ namespace TgLab.Tests.Bet.Services
             var actual = await _betService.ListAll(user.Email);
 
             // Assert
-            Assert.That(actual.Count() > 0, "There are bets in the database");
+            Assert.That(actual.Count(), Is.GreaterThan(0), "There are bets in the database");
         }
 
         [Test]
@@ -251,7 +281,7 @@ namespace TgLab.Tests.Bet.Services
             var actual = _context.Bets.FirstOrDefault(b => b.Id == 1);
 
             // Assert
-            Assert.That(actual.Stage == BetStage.CANCELLED, "There are bets in the database");
+            Assert.That(actual.Stage, Is.EqualTo(BetStage.CANCELLED), "There are bets in the database");
         }
     }
 }

@@ -3,6 +3,7 @@ using TgLab.Application.Transaction.DTOs;
 using TgLab.Application.Transaction.Interfaces;
 using TgLab.Application.User.Interfaces;
 using TgLab.Domain.Enums;
+using TgLab.Domain.Models;
 using TgLab.Infrastructure.Context;
 using BetDb = TgLab.Domain.Models.Bet;
 using TransactionDb = TgLab.Domain.Models.Transaction;
@@ -22,15 +23,18 @@ namespace TgLab.Application.Transaction.Services
 
         public Task Create(BetDb bet, TransactionType type)
         {
+            var bonus = CalcBonus(bet, type);
+
             var newTransaction = new TransactionDb()
             {
                 WalletId = bet.WalletId,
                 Time = DateTime.Now,
                 Type = type,
-                Amount = bet.Amount,
+                Amount = bet.Amount + bonus,
             };
 
             _context.Add(newTransaction);
+            _context.SaveChanges();
 
             return Task.CompletedTask;
         }
@@ -79,7 +83,30 @@ namespace TgLab.Application.Transaction.Services
                     Type = t.Type,
                     Amount = t.Amount
                 })
+            .ToList();
+        }
+
+        public decimal CalcBonus(BetDb bet, TransactionType type)
+        {
+            if (type.Equals(TransactionType.LOSS))
+                return 0;
+
+            var lastFiveTransanctions = _context.Transactions
+                .Where(t => t.WalletId == bet.WalletId)
+                .TakeLast(5)
+                .AsNoTracking()
                 .ToList();
+
+            var allLosses = lastFiveTransanctions.All(lf => lf.Type.Equals(TransactionType.LOSS));
+
+            if (!allLosses)
+            {
+                var totalLost = lastFiveTransanctions.Sum(lf => lf.Amount);
+
+                return totalLost * 0.1M;
+            }
+ 
+            return 0;
         }
     }
 }
