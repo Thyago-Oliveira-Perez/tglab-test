@@ -3,16 +3,19 @@ using TgLab.Infrastructure.Context;
 using TgLab.Application.User.Exceptions;
 using TgLab.Application.User.Interfaces;
 using UserDb = TgLab.Domain.Models.User;
+using TgLab.Application.Wallet.DTOs;
+using TgLab.Application.Wallet.Interfaces;
 
 namespace TgLab.Application.User.Services
 {
     public class UserService : IUserService
     {
         private readonly TgLabContext _context;
-
-        public UserService(TgLabContext context)
+        private readonly IWalletService _walletService;
+        public UserService(TgLabContext context, IWalletService walletService)
         {
             _context = context;
+            _walletService = walletService;
         }
 
         public Task Create(CreateUserDTO dto)
@@ -30,10 +33,14 @@ namespace TgLab.Application.User.Services
                 BirthDate = dto.BirthDate,
             };
 
-            _context.Users.Add(user);
-            var result = _context.SaveChanges();
+            var addedUser = _context.Users.Add(user);
+            _context.SaveChanges();
 
-            return Task.FromResult(result);
+            var defaultWallet = new CreateWalletDTO().CreateDefaultWallet(addedUser.Entity.Id);
+
+            _walletService.Create(defaultWallet);
+
+            return Task.CompletedTask;
         }
     }
 }

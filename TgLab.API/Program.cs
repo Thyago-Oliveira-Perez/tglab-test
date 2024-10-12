@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
+using TgLab.Application.Wallet.Interfaces;
+using TgLab.Application.Wallet.Services;
 using TgLab.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IWalletService, WalletService>();
 
 builder.Services.AddControllers();
 

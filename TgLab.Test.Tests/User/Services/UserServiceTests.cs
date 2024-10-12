@@ -3,6 +3,9 @@ using TgLab.Application.User.Exceptions;
 using TgLab.Application.User.Services;
 using TgLab.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
+using TgLab.Application.Wallet.Services;
+using TgLab.Application.Wallet.Interfaces;
+using TgLab.Application.User.Interfaces;
 
 namespace TgLab.Tests.User.Services
 {
@@ -10,7 +13,8 @@ namespace TgLab.Tests.User.Services
     public class UserServiceTests
     {
         private TgLabContext _context;
-        private UserService _userService;
+        private IUserService _userService;
+        private IWalletService _walletService;
 
         [SetUp]
         public void SetUp()
@@ -20,11 +24,12 @@ namespace TgLab.Tests.User.Services
                 .Options;
 
             _context = new TgLabContext(options);
-            _userService = new UserService(_context);
+            _walletService = new WalletService(_context);
+            _userService = new UserService(_context, _walletService);
         }
 
         [Test]
-        public void Given_Default_Should_Create_A_User()
+        public void Given_WhenUserIsUnder18_Should_Return_Exception()
         {
             // Arrange
             var createUserDto = new CreateUserDTO
@@ -40,7 +45,7 @@ namespace TgLab.Tests.User.Services
         }
 
         [Test]
-        public async Task Create_WhenUserIsAdult_ShouldAddUser()
+        public async Task Given_WhenUserIsOver18_Should_Create_A_User()
         {
             // Arrange
             var dto = new CreateUserDTO
