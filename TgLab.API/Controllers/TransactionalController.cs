@@ -16,7 +16,7 @@ namespace TgLab.API.Controllers
         }
 
         [HttpGet("List")]
-        public IEnumerable<string> GetTransactions() 
+        public IEnumerable<string> List() 
         {
             throw new NotImplementedException();
         }

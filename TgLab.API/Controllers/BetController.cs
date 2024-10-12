@@ -50,10 +50,27 @@ namespace TgLab.API.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpGet("List")]
-        public IEnumerable<string> Get()
+        [HttpGet("List/{walletId}")]
+        public async Task<ActionResult<IEnumerable<BetDTO>>> ListBetsByWalletId(int walletId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var result = await _service.ListBetsByWalletId(walletId, userEmail);
+
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError($"[{nameof(ListBetsByWalletId)}] Invalid request: {ex.Message}", ex);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"[{nameof(ListBetsByWalletId)}] Error trying to list bets: {ex.Message}", ex);
+                return StatusCode(500, "Internal server error.");
+            }
         }
     }
 }

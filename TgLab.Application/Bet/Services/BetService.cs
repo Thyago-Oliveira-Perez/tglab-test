@@ -5,6 +5,7 @@ using TgLab.Application.User.Interfaces;
 using BetDb = TgLab.Domain.Models.Bet;
 using WalletDb = TgLab.Domain.Models.Wallet;
 using TgLab.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace TgLab.Application.Bet.Services
 {
@@ -22,7 +23,7 @@ namespace TgLab.Application.Bet.Services
 
         public async Task Create(CreateGambleDTO dto, string userEmail)
         {
-            var user = await _userService.GetUserByEmail(userEmail);
+            var user = await _userService.GetUserAndWalletsByEmail(userEmail);
 
             ArgumentNullException.ThrowIfNull(user);
 
@@ -48,6 +49,30 @@ namespace TgLab.Application.Bet.Services
             _context.SaveChanges();
 
             await _userService.DecreaseUserBalance(user.Id, dto.WalletId, dto.Amount);
+        }
+
+        public async Task<IEnumerable<BetDTO>> ListBetsByWalletId(int walletId, string userEmail)
+        {
+            var user = await _userService.GetUserAndWalletsByEmail(userEmail);
+
+            ArgumentNullException.ThrowIfNull(user);
+
+            var wallet = user.Wallets.SingleOrDefault(w => w.Id == walletId);
+            
+            ArgumentNullException.ThrowIfNull(wallet);
+
+            return _context.Bets
+                .Where(b => b.WalletId == walletId)
+                .AsNoTracking()
+                .Select(b => new BetDTO()
+                {
+                    Id = b.Id,
+                    Amount = b.Amount,
+                    Stage = b.Stage,
+                    Bounty = b.Bounty,
+                    Time = b.Time
+                })
+                .ToList();
         }
 
         public bool InvalidBet(CreateGambleDTO bet, WalletDb wallet)

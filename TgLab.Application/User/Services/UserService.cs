@@ -48,7 +48,7 @@ namespace TgLab.Application.User.Services
             return Task.CompletedTask;
         }
 
-        public async Task<UserDb?> GetUserByEmail(string email)
+        public async Task<UserDb?> GetUserAndWalletsByEmail(string email)
         {
             return await _context.Users
                 .Include(u => u.Wallets)

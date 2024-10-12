@@ -39,7 +39,7 @@ namespace TgLab.Tests.Bet.Services
         }
 
         [Test]
-        public void Given_Default_Should_Decrease_User_Balance()
+        public async Task Given_Default_Should_Decrease_User_Balance()
         {
             // Arrange
             var expected = 90;
@@ -52,8 +52,10 @@ namespace TgLab.Tests.Bet.Services
                 BirthDate = DateTime.Now.AddYears(-20)
             };
 
-            _userService.Create(userDto);
-            var user = _context.Users.FirstOrDefault(u => u.Email == userDto.Email);
+            await _userService.Create(userDto);
+            var user = _context.Users
+                .Include(u => u.Wallets)
+                .First(u => u.Email == userDto.Email);
 
             var createGambleDTO = new CreateGambleDTO()
             {
@@ -62,7 +64,7 @@ namespace TgLab.Tests.Bet.Services
             };
 
             // Act
-            _betService.Create(createGambleDTO, user.Email);
+            await _betService.Create(createGambleDTO, user.Email);
 
             user = _context.Users.FirstOrDefault(u => u.Email == userDto.Email);
 
@@ -122,6 +124,48 @@ namespace TgLab.Tests.Bet.Services
 
             // Assert
             Assert.That(actual, Is.False);
+        }
+
+        [Test]
+        public async Task Given_Default_Should_Return_List_Of_Bets()
+        {
+            // Arrange
+            var userDto = new CreateUserDTO
+            {
+                Name = "Test Login User",
+                Email = "test@login.com",
+                Password = "test*login*password",
+                BirthDate = DateTime.Now.AddYears(-20)
+            };
+
+            await _userService.Create(userDto);
+
+            var user = _context.Users
+                .Include(u => u.Wallets)
+                .First(u => u.Email == userDto.Email);
+
+            var walletId = user.Wallets.First().Id;
+
+            var gamble1 = new CreateGambleDTO()
+            {
+                WalletId = walletId,
+                Amount = 10
+            };
+
+            var gamble2 = new CreateGambleDTO()
+            {
+                WalletId = walletId,
+                Amount = 20
+            };
+
+            // Act
+            await _betService.Create(gamble1, user.Email);
+            await _betService.Create(gamble2, user.Email);
+
+            var actual = await _betService.ListBetsByWalletId(walletId, user.Email);
+
+            // Assert
+            Assert.That(actual.Count() > 0, "There is bets in the database");
         }
     }
 }
