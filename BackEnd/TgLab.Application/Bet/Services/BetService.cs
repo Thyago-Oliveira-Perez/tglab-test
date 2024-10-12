@@ -120,6 +120,11 @@ namespace TgLab.Application.Bet.Services
                 throw new ArgumentException($"[{Cancel}] Invalid bet");
             }
 
+            if (bet.Stage == BetStage.CANCELLED)
+            {
+                throw new ArgumentException($"[{Cancel}] Bet already cancelled");
+            }
+
             bet.Stage = BetStage.CANCELLED;
 
             _context.Bets.Update(bet);
