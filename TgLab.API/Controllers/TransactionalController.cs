@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TgLab.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("Transactions")]
     public class TransactionalController : Controller

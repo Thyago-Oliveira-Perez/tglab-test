@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TgLab.Application.Auth.DTOs;
 using TgLab.Application.Auth.Interfaces;
 
@@ -17,6 +18,7 @@ namespace TgLab.API.Controllers
             _authService = authService;
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {

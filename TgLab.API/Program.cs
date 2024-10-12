@@ -9,6 +9,9 @@ using TgLab.Infrastructure.Context;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TgLab.Application.Auth.Interfaces;
+using Microsoft.OpenApi.Models;
+using TgLab.Application.Bet.Services;
+using TgLab.Application.Bet.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,7 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ICryptService, CryptService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IWalletService, WalletService>();
+builder.Services.AddTransient<IBetService, BetService>();
 
 builder.Services.AddControllers();
 
@@ -46,7 +50,35 @@ builder.Services.AddAuthentication(x =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "TgLab API", Version = "v1" });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' followed by a space and the JWT token."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddDbContext<TgLabContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

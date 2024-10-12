@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TgLab.Application.User.DTOs;
 using TgLab.Application.User.Interfaces;
 
 namespace TgLab.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("User")]
     public class UserController : Controller
@@ -17,6 +19,7 @@ namespace TgLab.API.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
         [HttpPost("Create")]
         public IActionResult CreateUser([FromBody] CreateUserDTO dto)
         {

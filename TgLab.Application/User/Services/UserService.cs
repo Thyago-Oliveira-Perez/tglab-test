@@ -6,7 +6,7 @@ using UserDb = TgLab.Domain.Models.User;
 using TgLab.Application.Wallet.DTOs;
 using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Auth.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace TgLab.Application.User.Services
 {
@@ -44,6 +44,32 @@ namespace TgLab.Application.User.Services
             var defaultWallet = new CreateWalletDTO().CreateDefaultWallet(addedUser.Entity.Id);
 
             _walletService.Create(defaultWallet);
+
+            return Task.CompletedTask;
+        }
+
+        public async Task<UserDb?> GetUserByEmail(string email)
+        {
+            return await _context.Users
+                .Include(u => u.Wallets)
+                .FirstOrDefaultAsync(u => u.Email.Equals(email));
+        }
+
+        public Task DecreaseUserBalance(int Id, int walletId, int amount)
+        {
+            var user = _context.Users
+                .Include (u => u.Wallets)
+                .FirstOrDefault(u => u.Id == Id);
+
+            ArgumentNullException.ThrowIfNull(user);
+
+            var wallet = user.Wallets.FirstOrDefault(w => w.Id == walletId);
+
+            ArgumentNullException.ThrowIfNull(wallet);
+
+            wallet.Balance -= amount;
+
+            _context.SaveChanges();
 
             return Task.CompletedTask;
         }
