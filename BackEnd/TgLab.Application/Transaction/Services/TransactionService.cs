@@ -1,20 +1,38 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TgLab.Application.Transactional.DTOs;
-using TgLab.Application.Transactional.Interfaces;
+using TgLab.Application.Transaction.DTOs;
+using TgLab.Application.Transaction.Interfaces;
 using TgLab.Application.User.Interfaces;
+using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
+using BetDb = TgLab.Domain.Models.Bet;
+using TransactionDb = TgLab.Domain.Models.Transaction;
 
-namespace TgLab.Application.Transactional.Services
+namespace TgLab.Application.Transaction.Services
 {
-    public class TransactionalService : ITransactionalService
+    public class TransactionService : ITransactionService
     {
         private readonly TgLabContext _context;
         private readonly IUserService _userService;
 
-        public TransactionalService(TgLabContext context, IUserService userService)
+        public TransactionService(TgLabContext context, IUserService userService)
         {
             _context = context;
             _userService = userService;
+        }
+
+        public Task Create(BetDb bet, TransactionType type)
+        {
+            var newTransaction = new TransactionDb()
+            {
+                WalletId = bet.WalletId,
+                Time = DateTime.Now,
+                Type = type,
+                Amount = bet.Amount,
+            };
+
+            _context.Add(newTransaction);
+
+            return Task.CompletedTask;
         }
 
         public async Task<IEnumerable<TransactionDTO>> ListAll(string userEmail)

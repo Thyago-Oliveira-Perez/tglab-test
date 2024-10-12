@@ -24,7 +24,7 @@ namespace TgLab.Tests.Transaction.Services
         private IUserService _userService;
         private IWalletService _walletService;
         private ICryptService _cryptService;
-        private ITransactionalService _transactionalService;
+        private ITransactionService _transactionalService;
 
         [SetUp]
         public void SetUp()
@@ -37,7 +37,7 @@ namespace TgLab.Tests.Transaction.Services
             _walletService = new WalletService(_context);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
-            _transactionalService = new TransactionalService(_context, _userService);
+            _transactionalService = new TransactionService(_context, _userService);
         }
 
         [TearDown]

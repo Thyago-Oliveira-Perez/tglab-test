@@ -6,6 +6,8 @@ using BetDb = TgLab.Domain.Models.Bet;
 using WalletDb = TgLab.Domain.Models.Wallet;
 using TgLab.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using TgLab.Application.Wallet.Interfaces;
+using TgLab.Application.Game;
 
 namespace TgLab.Application.Bet.Services
 {
@@ -13,12 +15,16 @@ namespace TgLab.Application.Bet.Services
     {
         private readonly TgLabContext _context;
         private readonly IUserService _userService;
+        private readonly IWalletService _walletService;
+        private readonly GameService _gameService;
         private readonly int MinBet = 1;
 
-        public BetService(TgLabContext context, IUserService userService)
+        public BetService(TgLabContext context, IUserService userService, IWalletService walletService, GameService gameService)
         {
             _context = context;
             _userService = userService;
+            _walletService = walletService;
+            _gameService = gameService;
         }
 
         public async Task Create(CreateGambleDTO dto, string userEmail)
@@ -45,10 +51,12 @@ namespace TgLab.Application.Bet.Services
                 Time = DateTime.Now
             };
 
-            _context.Bets.Add(newBet);
+            var result = _context.Bets.Add(newBet);
             _context.SaveChanges();
 
-            await _userService.DecreaseUserBalance(user.Id, dto.WalletId, dto.Amount);
+            _gameService.DoBet(result.Entity);
+
+            _walletService.DecreaseBalance(dto.WalletId, dto.Amount);
         }
 
         public async Task<IEnumerable<BetDTO>> ListBetsByWalletId(int walletId, string userEmail)

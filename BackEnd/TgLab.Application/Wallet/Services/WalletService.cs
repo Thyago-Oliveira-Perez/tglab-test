@@ -29,5 +29,31 @@ namespace TgLab.Application.Wallet.Services
 
             return Task.CompletedTask;
         }
+
+        public Task DecreaseBalance(int Id, int amount)
+        {
+            var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
+
+            ArgumentNullException.ThrowIfNull(wallet);
+
+            wallet.Balance -= amount;
+
+            _context.SaveChanges();
+
+            return Task.CompletedTask;
+        }
+
+        public Task IncreaseBalance(int Id, int bounty)
+        {
+            var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
+
+            ArgumentNullException.ThrowIfNull(wallet);
+
+            wallet.Balance += bounty;
+
+            _context.SaveChanges();
+
+            return Task.CompletedTask;
+        }
     }
 }

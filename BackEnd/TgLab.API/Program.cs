@@ -12,6 +12,9 @@ using TgLab.Application.Auth.Interfaces;
 using Microsoft.OpenApi.Models;
 using TgLab.Application.Bet.Services;
 using TgLab.Application.Bet.Interfaces;
+using TgLab.Application.Game;
+using TgLab.Application.Transaction.Interfaces;
+using TgLab.Application.Transaction.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,10 @@ builder.Services.AddTransient<ICryptService, CryptService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IWalletService, WalletService>();
 builder.Services.AddTransient<IBetService, BetService>();
+builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddSingleton<GameService>();
+
+builder.Services.AddHostedService<GameService>();
 
 builder.Services.AddControllers();
 

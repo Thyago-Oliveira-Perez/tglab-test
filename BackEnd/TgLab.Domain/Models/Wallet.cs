@@ -9,6 +9,7 @@ namespace TgLab.Domain.Models
         public int Balance { get; set; }
         public Currency Currency { get; set; }
 
+        public virtual User User { get; set; }
         public virtual IEnumerable<Transaction> Transactions { get; set; }
         public virtual IEnumerable<Bet> Bets { get; set; }
     }

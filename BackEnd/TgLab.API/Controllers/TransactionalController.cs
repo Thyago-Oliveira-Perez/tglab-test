@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TgLab.Application.Bet.DTOs;
-using TgLab.Application.Transactional.Interfaces;
+using TgLab.Application.Transaction.Interfaces;
 
 namespace TgLab.API.Controllers
 {
@@ -12,9 +12,9 @@ namespace TgLab.API.Controllers
     public class TransactionalController : Controller
     {
         private readonly ILogger<TransactionalController> _logger;
-        private readonly ITransactionalService _service;
+        private readonly ITransactionService _service;
 
-        public TransactionalController(ILogger<TransactionalController> logger, ITransactionalService service)
+        public TransactionalController(ILogger<TransactionalController> logger, ITransactionService service)
         {
             _logger = logger;
             _service = service;
