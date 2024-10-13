@@ -21,6 +21,25 @@ namespace TgLab.Infrastructure.Context
                 entity.HasIndex(k => k.Email).IsUnique();
             });
 
+            modelBuilder.Entity<Wallet>(entity =>
+            {
+                entity.HasKey(k => k.Id);
+                entity.Property(w => w.Balance).HasColumnType("money");
+            });
+
+            modelBuilder.Entity<Bet>(entity =>
+            {
+                entity.HasKey(k => k.Id);
+                entity.Property(w => w.Amount).HasColumnType("money");
+                entity.Property(w => w.Bounty).HasColumnType("money");
+            });
+
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.HasKey(k => k.Id);
+                entity.Property(w => w.Amount).HasColumnType("money");
+            });
+
             base.OnModelCreating(modelBuilder);
         }
 

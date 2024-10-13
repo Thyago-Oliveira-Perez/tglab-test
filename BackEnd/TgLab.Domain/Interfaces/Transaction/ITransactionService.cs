@@ -10,6 +10,6 @@ namespace TgLab.Domain.Interfaces.Transaction
         public Task Create(CreateTransactionDTO dto);
         public Task<PaginatedList<TransactionDTO>> ListAll(string userEmail, int pageIndex, int pageSize);
         public Task<PaginatedList<TransactionDTO>> ListTransactionsByWalletId(int walletId, string userEmail, int pageIndex, int pageSize);
-        public decimal CalcBonus(int walletId, TransactionType type);
+        public double CalcBonus(int walletId, TransactionType type);
     }
 }

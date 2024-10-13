@@ -88,7 +88,7 @@ namespace TgLab.Application.Wallet.Services
             await _transactionService.Create(transaction);
         }
 
-        public async Task DecreaseBalance(WalletDb wallet, decimal amount)
+        public async Task DecreaseBalance(WalletDb wallet, double amount)
         {
             ArgumentNullException.ThrowIfNull(wallet);
 
@@ -100,7 +100,7 @@ namespace TgLab.Application.Wallet.Services
             await _notificationService.SendMessageAsync($"{wallet.Balance}");
         }
 
-        public async Task IncreaseBalance(WalletDb wallet, decimal amount)
+        public async Task IncreaseBalance(WalletDb wallet, double amount)
         {
             ArgumentNullException.ThrowIfNull(wallet);
 

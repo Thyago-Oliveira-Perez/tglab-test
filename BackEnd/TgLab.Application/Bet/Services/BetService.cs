@@ -22,7 +22,7 @@ namespace TgLab.Application.Bet.Services
         private readonly IWalletService _walletService;
         private readonly ITransactionService _transactionService;
         private readonly GameService _gameService;
-        private readonly decimal MinBet = 1M;
+        private readonly double MinBet = 1;
 
         public BetService(TgLabContext context, IUserService userService, IWalletService walletService, ITransactionService transactionService, GameService gameService)
         {

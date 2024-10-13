@@ -8,8 +8,7 @@ namespace TgLab.Domain.Models
         public int WalletId { get; set; }
         public DateTime Time { get; set; }
         public string Type {get ; set;}
-        [Column(TypeName = "money")]
-        public decimal Amount { get; set;}
+        public double Amount { get; set;}
 
         public virtual Wallet Wallet { get; set; }
     }

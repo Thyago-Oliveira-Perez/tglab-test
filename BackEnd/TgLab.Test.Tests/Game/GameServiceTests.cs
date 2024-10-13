@@ -19,7 +19,7 @@ namespace TgLab.Tests.Game
         public void CalcBounty_Should_Return_Correct_Bounty_Amount()
         {
             // Arrange
-            decimal betAmount = 100m;
+            double betAmount = 100;
 
             // Act
             var bounty = GameService.CalcBounty(betAmount);

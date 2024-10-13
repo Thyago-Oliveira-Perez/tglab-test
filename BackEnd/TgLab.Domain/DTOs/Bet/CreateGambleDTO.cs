@@ -3,6 +3,6 @@
     public class CreateGambleDTO
     {
         public int WalletId { get; set; }
-        public int Amount { get; set; }
+        public double Amount { get; set; }
     }
 }

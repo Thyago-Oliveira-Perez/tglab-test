@@ -6,8 +6,7 @@ namespace TgLab.Domain.Models
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        [Column(TypeName = "money")]
-        public decimal Balance { get; set; }
+        public double Balance { get; set; }
         public string Currency { get; set; }
 
         public virtual User User { get; set; }

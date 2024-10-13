@@ -104,7 +104,7 @@ namespace TgLab.Application.Transaction.Services
             return new PaginatedList<TransactionDTO>(transactions, pageIndex, totalPages);
         }
 
-        public decimal CalcBonus(int walletId, TransactionType type)
+        public double CalcBonus(int walletId, TransactionType type)
         {
             if (type.Value.Equals(TransactionType.BET.Value))
                 return 0;
@@ -122,7 +122,7 @@ namespace TgLab.Application.Transaction.Services
             {
                 var totalLost = lastFiveTransanctions.Sum(lf => lf.Amount);
 
-                return totalLost * 0.1M;
+                return totalLost * 0.1;
             }
  
             return 0;
