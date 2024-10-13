@@ -51,7 +51,7 @@ namespace TgLab.API.Controllers
             {
                 string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                await _service.Cancel(id, userEmail);
+                await _service.CancelBetOperation(id, userEmail);
 
                 return Ok();
             }

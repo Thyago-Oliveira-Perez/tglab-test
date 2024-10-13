@@ -8,15 +8,18 @@ using TgLab.Application.User.Services;
 using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
-using WalletDb = TgLab.Domain.Models.Wallet;
 using TgLab.Domain.DTOs.User;
 using TgLab.Domain.DTOs.Bet;
-using TgLab.Domain.Interfaces.Notification;
 using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Auth;
 using TgLab.Domain.Interfaces.Bet;
 using TgLab.Domain.Interfaces.Wallet;
 using TgLab.Domain.Interfaces.User;
+using WalletDb = TgLab.Domain.Models.Wallet;
+using BetDb = TgLab.Domain.Models.Bet;
+using UserDb = TgLab.Domain.Models.User;
+using TgLab.Domain.Interfaces.Transaction;
+using TgLab.Application.Transaction.Services;
 
 namespace TgLab.Tests.Bet.Services
 {
@@ -28,6 +31,7 @@ namespace TgLab.Tests.Bet.Services
         private IWalletService _walletService;
         private ICryptService _cryptService;
         private IBetService _betService;
+        private ITransactionService _transactionService;
         private ILogger<BetService> _logger;
         private IServiceScopeFactory _scopeFactory;
         private IServiceProvider _serviceProvider;
@@ -64,7 +68,8 @@ namespace TgLab.Tests.Bet.Services
 
             // Inicializando o GameService e o BetService
             _gameService = new GameService(_logger, _scopeFactory);
-            _betService = new BetService(_context, _userService, _walletService, _gameService);
+            _transactionService = new TransactionService(_context, _userService);
+            _betService = new BetService(_context, _userService, _walletService, _transactionService, _gameService);
 
             // CancellationToken para parar o serviço de background após cada teste
             _cancellationTokenSource = new CancellationTokenSource();
@@ -136,7 +141,7 @@ namespace TgLab.Tests.Bet.Services
         public async Task Given_Default_Should_Return_List_Of_Bets_Based_On_WalletId()
         {
             // Arrange
-            var userDto = new CreateUserDTO
+            var user = new UserDb
             {
                 Name = "Test Login User",
                 Email = "test@login.com",
@@ -144,41 +149,76 @@ namespace TgLab.Tests.Bet.Services
                 BirthDate = DateTime.Now.AddYears(-20)
             };
 
-            await _userService.Create(userDto);
-
-            var user = _context.Users
-                .Include(u => u.Wallets)
-                .First(u => u.Email == userDto.Email);
-
-            var walletId = user.Wallets.First().Id;
-
-            var gamble1 = new CreateGambleDTO()
+            var wallets = new List<WalletDb>()
             {
-                WalletId = walletId,
-                Amount = 10
+                new()
+                {
+                    UserId = 1,
+                    Balance = 1000,
+                    Currency = Currency.BRL.Value,
+                },
+                new()
+                {
+                    UserId = 1,
+                    Balance = 10000,
+                    Currency = Currency.USD.Value,
+                }
             };
 
-            var gamble2 = new CreateGambleDTO()
-            {
-                WalletId = walletId,
-                Amount = 20
+            var bets = new List<BetDb>()
+            { 
+                new() 
+                {
+                   WalletId = 1,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                },
+                new()
+                {
+                   WalletId = 1,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                },
+                new()
+                {
+                   WalletId = 1,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                },
+                new()
+                {
+                   WalletId = 2,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                }
             };
+
+            _context.Users.Add(user);
+            _context.Wallets.AddRange(wallets);
+            _context.Bets.AddRange(bets);
+
+            _context.SaveChanges();
 
             // Act
-            await _betService.Create(gamble1, user.Email);
-            await _betService.Create(gamble2, user.Email);
-
-            var actual = await _betService.ListBetsByWalletId(walletId, user.Email, 1, 10);
+            var actual = await _betService.ListBetsByWalletId(1, user.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Items.Count(), Is.GreaterThan(0), "There is bets in the database");
+            Assert.That(actual.Items, Has.Count.EqualTo(3), "There is bets in the database");
         }
 
         [Test]
         public async Task Given_Default_Should_Return_All_Bets()
         {
             // Arrange
-            var userDto = new CreateUserDTO
+            var user = new UserDb
             {
                 Name = "Test Login User",
                 Email = "test@login.com",
@@ -186,41 +226,76 @@ namespace TgLab.Tests.Bet.Services
                 BirthDate = DateTime.Now.AddYears(-20)
             };
 
-            await _userService.Create(userDto);
-
-            var user = _context.Users
-                .Include(u => u.Wallets)
-                .First(u => u.Email == userDto.Email);
-
-            var walletId = user.Wallets.First().Id;
-
-            var gamble1 = new CreateGambleDTO()
+            var wallets = new List<WalletDb>()
             {
-                WalletId = walletId,
-                Amount = 10
+                new()
+                {
+                    UserId = 1,
+                    Balance = 1000,
+                    Currency = Currency.BRL.Value,
+                },
+                new()
+                {
+                    UserId = 1,
+                    Balance = 10000,
+                    Currency = Currency.USD.Value,
+                }
             };
 
-            var gamble2 = new CreateGambleDTO()
-            {
-                WalletId = walletId,
-                Amount = 20
+            var bets = new List<BetDb>()
+            { 
+                new() 
+                {
+                   WalletId = 1,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                },
+                new()
+                {
+                   WalletId = 1,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                },
+                new()
+                {
+                   WalletId = 1,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                },
+                new()
+                {
+                   WalletId = 2,
+                   Amount =  10,
+                   Bounty = 20,
+                   Time = DateTime.Now,
+                   Stage = BetStage.EXECUTED.Value
+                }
             };
+
+            _context.Users.Add(user);
+            _context.Wallets.AddRange(wallets);
+            _context.Bets.AddRange(bets);
+
+            _context.SaveChanges();
 
             // Act
-            await _betService.Create(gamble1, user.Email);
-            await _betService.Create(gamble2, user.Email);
-
             var actual = await _betService.ListAll(user.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Items.Count(), Is.GreaterThan(0), "There are bets in the database");
+            Assert.That(actual.Items, Has.Count.EqualTo(4), "There are bets in the database");
         }
 
         [Test]
         public async Task Given_Default_Should_Cancel_A_Bet_Based_On_Id()
         {
             // Arrange
-            var userDto = new CreateUserDTO
+            var user = new UserDb
             {
                 Name = "Test Login User",
                 Email = "test@login.com",
@@ -228,24 +303,39 @@ namespace TgLab.Tests.Bet.Services
                 BirthDate = DateTime.Now.AddYears(-20)
             };
 
-            await _userService.Create(userDto);
-
-            var user = _context.Users
-                .Include(u => u.Wallets)
-                .First(u => u.Email == userDto.Email);
-
-            var walletId = user.Wallets.First().Id;
-
-            var gamble1 = new CreateGambleDTO()
+            var wallets = new List<WalletDb>()
             {
-                WalletId = walletId,
-                Amount = 10
+                new()
+                {
+                    UserId = 1,
+                    Balance = 1000,
+                    Currency = Currency.BRL.Value,
+                },
+                new()
+                {
+                    UserId = 1,
+                    Balance = 10000,
+                    Currency = Currency.USD.Value,
+                }
             };
 
-            // Act
-            await _betService.Create(gamble1, user.Email);
+            var bet = new BetDb()
+            {
+                WalletId = 1,
+                Amount =  10,
+                Bounty = 20,
+                Time = DateTime.Now,
+                Stage = BetStage.SENT.Value
+            };
 
-            await _betService.Cancel(1, user.Email);
+            _context.Users.Add(user);
+            _context.Wallets.AddRange(wallets);
+            var result = _context.Bets.Add(bet);
+
+            _context.SaveChanges();
+
+            // Act
+            await _betService.Cancel(result.Entity);
 
             var actual = _context.Bets.FirstOrDefault(b => b.Id == 1);
 

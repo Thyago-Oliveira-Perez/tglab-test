@@ -7,7 +7,6 @@ using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
 using TransactionDb = TgLab.Domain.Models.Transaction;
-using TgLab.Domain.Interfaces.Notification;
 using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Auth;
 using TgLab.Domain.Interfaces.Transaction;
@@ -75,14 +74,14 @@ namespace TgLab.Tests.Transaction.Services
                         WalletId = walletId,
                         Amount = 50,
                         Time = DateTime.Now,
-                        Type = TransactionType.WIN.Value
+                        Type = TransactionType.WIN_BET.Value
                     },
                     new()
                     {
                         WalletId = walletId,
                         Amount = 13,
                         Time = DateTime.Now,
-                        Type = TransactionType.LOSS.Value
+                        Type = TransactionType.BET.Value
                     }
                 };
 
@@ -132,14 +131,14 @@ namespace TgLab.Tests.Transaction.Services
                         WalletId = walletId,
                         Amount = 50,
                         Time = DateTime.Now,
-                        Type = TransactionType.WIN.Value
+                        Type = TransactionType.WIN_BET.Value
                     },
                     new()
                     {
                         WalletId = walletId,
                         Amount = 13,
                         Time = DateTime.Now,
-                        Type = TransactionType.LOSS.Value
+                        Type = TransactionType.BET.Value
                     }
             };
 
@@ -150,14 +149,14 @@ namespace TgLab.Tests.Transaction.Services
                         WalletId = 2,
                         Amount = 50,
                         Time = DateTime.Now,
-                        Type = TransactionType.WIN.Value
+                        Type = TransactionType.WIN_BET.Value
                     },
                     new()
                     {
                         WalletId = 2,
                         Amount = 13,
                         Time = DateTime.Now,
-                        Type = TransactionType.LOSS.Value
+                        Type = TransactionType.BET.Value
                     }
             };
 

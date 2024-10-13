@@ -31,7 +31,6 @@ namespace TgLab.Application.User.Services
             }
 
             var alreadyExists = _context.Users
-                .AsNoTracking()
                 .Any(u => u.Email == dto.Email);
 
             if (alreadyExists)

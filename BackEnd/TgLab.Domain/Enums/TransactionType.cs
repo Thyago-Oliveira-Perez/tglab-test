@@ -6,8 +6,16 @@
 
         public string Value { get; private set; }
 
-        public static TransactionType WIN { get { return new("Win"); } }
-        public static TransactionType LOSS { get { return new("Loss"); } }
+        // Credits
+        public static TransactionType WIN_BET { get { return new("Win"); } }
+        public static TransactionType DEPOSIT { get { return new("Deposit"); } }
+        public static TransactionType RECHARGE_BONUS { get { return new("RechargeBonus"); } }
+        public static TransactionType REFUND { get { return new("Refund"); } }
+
+        // Debts
+        public static TransactionType BET { get { return new("Bet"); } }
+        public static TransactionType WITHDRAWAL { get { return new("Withdrawal"); } }
+        public static TransactionType SERVICE_FEE { get { return new("ServiceFee"); } }
 
         public override string ToString()
         {

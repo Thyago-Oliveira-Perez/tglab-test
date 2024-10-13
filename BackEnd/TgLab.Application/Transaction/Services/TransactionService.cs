@@ -105,7 +105,7 @@ namespace TgLab.Application.Transaction.Services
 
         public decimal CalcBonus(BetDb bet, string type)
         {
-            if (type.Equals(TransactionType.LOSS.Value))
+            if (type.Equals(TransactionType.BET.Value))
                 return 0;
 
             var lastFiveTransanctions = _context.Transactions
@@ -115,7 +115,7 @@ namespace TgLab.Application.Transaction.Services
                 .AsNoTracking()
                 .ToList();
 
-            var allLosses = lastFiveTransanctions.All(lf => lf.Type.Equals(TransactionType.LOSS.Value));
+            var allLosses = lastFiveTransanctions.All(lf => lf.Type.Equals(TransactionType.BET.Value));
 
             if (allLosses && lastFiveTransanctions.Count == 5)
             {
