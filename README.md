@@ -39,33 +39,62 @@ Este projeto é uma API RESTful desenvolvida em C# (.NET 6) para gerenciar as tr
 - **.NET 6**
 - **Docker**
 
+## Rodar o projeto
+
+Para rodar o projeto temos 2 opções.
+
+1. Rodar ele via Visual Studio.
+2. Rodar pelo terminal.
+
+Segue um exemplo de cada uma das opções.
+
+### Visual studio
+
+Para rodar o projeto basta selecionar o projeto TgLab.API na aba de 'StartUp Project' como a seguir:
+![alt text](image.png)
+
+### Terminal
+
+Para rodar o projeto basta acessar a pasta TgLab.API e rodar o comando `dotnet run` como no exemplo:
+
+```
+PS D:\user\tglab-test\BackEnd> cd TgLab.API
+PS D:\user\tglab-test\BackEnd\TgLab.API> dotnet run
+```
+
+## Swagger
+
+A documentação da API foi gerada com o Swagger. Para acessá-la, abra o navegador e insira a URL `https://localhost:{port}/swagger/index.html`, substituindo {port} pela porta em que o projeto está sendo executado. Se você estiver rodando o projeto via Docker, a porta será 8080. Caso esteja rodando localmente, a porta padrão será 7199.
+
 ## Migrations
 
 ### Adicionar
 
 ```
-ADD-MIGRATION [nome_migration]
+dotnet ef migrations add [nome_migration]
 ```
 
 ### Aplicar
 
 ```
-UPDATE-DATABASE
+dotnet ef database update
 ```
 
 ### Remover
 
 ```
-Remove-Migration
+dotnet ef migrations remove
 ```
 
 - Esse comando remove a migration mais recente
 
-### Reverter o banco para uma migration especifica
+### Listar migrations
 
 ```
-Update-database [nome_migration]
+dotnet ef migrations list
 ```
+
+- ref: https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/managing?tabs=dotnet-core-cli
 
 ## Docker
 
@@ -82,6 +111,13 @@ Feito isso podemos subir os serviços com o seguinte comando:
 
 ```
 docker-compose up -d
+```
+
+Com o banco de dados rodando, precisamos rodar as migrations para que o banco fique totalmente atualizado. Para isso acesse a pasta da projeto TgLab.API e rode `dotnet ef database update`.
+
+```
+PS D:\user\tglab-test> cd .\BackEnd\TgLab.API\
+PS D:\user\tglab-test\BackEnd\TgLab.API> dotnet ef database update
 ```
 
 ## WebSocket
