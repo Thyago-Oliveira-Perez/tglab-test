@@ -46,11 +46,11 @@ namespace TgLab.Application.Game
 
                     if (_betService.IsCancelled(bet.Id))
                     {
-                        bet.Stage = BetStage.CANCELLED;
+                        bet.Stage = BetStage.CANCELLED.Value;
                     } 
                     else
                     {
-                        bet.Stage = BetStage.EXECUTED;
+                        bet.Stage = BetStage.EXECUTED.Value;
                         
                         if (won)
                         {

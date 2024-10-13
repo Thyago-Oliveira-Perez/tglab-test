@@ -75,14 +75,14 @@ namespace TgLab.Tests.Transaction.Services
                         WalletId = walletId,
                         Amount = 50,
                         Time = DateTime.Now,
-                        Type = TransactionType.WIN
+                        Type = TransactionType.WIN.Value
                     },
                     new()
                     {
                         WalletId = walletId,
                         Amount = 13,
                         Time = DateTime.Now,
-                        Type = TransactionType.LOSS
+                        Type = TransactionType.LOSS.Value
                     }
                 };
 
@@ -132,14 +132,14 @@ namespace TgLab.Tests.Transaction.Services
                         WalletId = walletId,
                         Amount = 50,
                         Time = DateTime.Now,
-                        Type = TransactionType.WIN
+                        Type = TransactionType.WIN.Value
                     },
                     new()
                     {
                         WalletId = walletId,
                         Amount = 13,
                         Time = DateTime.Now,
-                        Type = TransactionType.LOSS
+                        Type = TransactionType.LOSS.Value
                     }
             };
 
@@ -150,14 +150,14 @@ namespace TgLab.Tests.Transaction.Services
                         WalletId = 2,
                         Amount = 50,
                         Time = DateTime.Now,
-                        Type = TransactionType.WIN
+                        Type = TransactionType.WIN.Value
                     },
                     new()
                     {
                         WalletId = 2,
                         Amount = 13,
                         Time = DateTime.Now,
-                        Type = TransactionType.LOSS
+                        Type = TransactionType.LOSS.Value
                     }
             };
 

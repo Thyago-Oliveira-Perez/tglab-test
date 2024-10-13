@@ -94,7 +94,7 @@ namespace TgLab.Tests.Bet.Services
             {
                 Id = 1,
                 Balance = 0,
-                Currency = Currency.BRL,
+                Currency = Currency.BRL.Value,
                 UserId = 1
             };
 
@@ -121,7 +121,7 @@ namespace TgLab.Tests.Bet.Services
             {
                 Id = 1,
                 Balance = 100,
-                Currency = Currency.BRL,
+                Currency = Currency.BRL.Value,
                 UserId = 1
             };
 
@@ -250,7 +250,7 @@ namespace TgLab.Tests.Bet.Services
             var actual = _context.Bets.FirstOrDefault(b => b.Id == 1);
 
             // Assert
-            Assert.That(actual.Stage, Is.EqualTo(BetStage.CANCELLED), "There are bets in the database");
+            Assert.That(actual.Stage, Is.EqualTo(BetStage.CANCELLED.Value), "There are bets in the database");
         }
     }
 }

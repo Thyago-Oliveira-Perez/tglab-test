@@ -44,7 +44,7 @@ namespace TgLab.Application.Bet.Services
             {
                 WalletId = dto.WalletId,
                 Amount = dto.Amount,
-                Stage = BetStage.SENT,
+                Stage = BetStage.SENT.Value,
                 Bounty = 0,
                 Time = DateTime.Now
             };
@@ -150,12 +150,12 @@ namespace TgLab.Application.Bet.Services
                 throw new ArgumentException($"[{Cancel}] Invalid bet");
             }
 
-            if (bet.Stage == BetStage.CANCELLED)
+            if (bet.Stage == BetStage.CANCELLED.Value)
             {
                 throw new ArgumentException($"[{Cancel}] Bet already cancelled");
             }
 
-            bet.Stage = BetStage.CANCELLED;
+            bet.Stage = BetStage.CANCELLED.Value;
 
             _context.Bets.Update(bet);
             _context.SaveChanges();
@@ -172,7 +172,7 @@ namespace TgLab.Application.Bet.Services
             
             ArgumentNullException.ThrowIfNull(bet);
 
-            return bet.Stage == BetStage.CANCELLED;
+            return bet.Stage == BetStage.CANCELLED.Value;
         }
     }
 }
