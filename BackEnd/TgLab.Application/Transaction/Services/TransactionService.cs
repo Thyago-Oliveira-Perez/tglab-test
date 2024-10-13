@@ -20,14 +20,12 @@ namespace TgLab.Application.Transaction.Services
 
         public Task Create(CreateTransactionDTO dto)
         {
-            var bonus = CalcBonus(dto.WalletId, dto.Type.Value);
-
             var newTransaction = new TransactionDb()
             {
                 WalletId = dto.WalletId,
                 Time = DateTime.Now,
                 Type = dto.Type.Value,
-                Amount = dto.Amount + bonus,
+                Amount = dto.Amount,
             };
 
             _context.Add(newTransaction);
@@ -106,9 +104,9 @@ namespace TgLab.Application.Transaction.Services
             return new PaginatedList<TransactionDTO>(transactions, pageIndex, totalPages);
         }
 
-        public decimal CalcBonus(int walletId, string type)
+        public decimal CalcBonus(int walletId, TransactionType type)
         {
-            if (type.Equals(TransactionType.BET.Value))
+            if (type.Value.Equals(TransactionType.BET.Value))
                 return 0;
 
             var lastFiveTransanctions = _context.Transactions

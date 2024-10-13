@@ -32,7 +32,7 @@ namespace TgLab.Application.Game
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            while (true)
             {
                 if (_betsQueue.TryDequeue(out var bet))
                 {
@@ -45,11 +45,7 @@ namespace TgLab.Application.Game
                     var _walletService = scope.ServiceProvider.GetRequiredService<IWalletService>();
                     var _betService = scope.ServiceProvider.GetRequiredService<IBetService>();
 
-                    if (_betService.IsCancelled(bet.Id))
-                    {
-                        bet.Stage = BetStage.CANCELLED.Value;
-                    } 
-                    else
+                    if (!_betService.IsCancelled(bet.Id))
                     {
                         bet.Stage = BetStage.EXECUTED.Value;
                         
@@ -58,26 +54,27 @@ namespace TgLab.Application.Game
                             _logger.LogInformation($"[{nameof(ExecuteAsync)}] User {bet.Wallet.User.Name} won the bet!");
 
                             var bounty = CalcBounty(bet.Amount);
+                            var bonus = _transactionalService.CalcBonus(bet.WalletId, TransactionType.WIN_BET);
 
-                            bet.Bounty = bounty;
+                            bet.Bounty = bounty + bonus;
 
                             var transaction = new CreateTransactionDTO()
                             {
                                 WalletId = bet.WalletId,
-                                Amount = bet.Amount,
+                                Amount = bet.Bounty - bet.Amount,
                                 Type = TransactionType.WIN_BET
                             };
 
-                            await _transactionalService.Create(transaction);
-                            await _walletService.IncreaseBalance(bet.Wallet, bounty);
+                            _transactionalService.Create(transaction);
+                            _walletService.IncreaseBalance(bet.Wallet, bounty);
                         }
                         else
                         {
                             _logger.LogInformation($"[{nameof(ExecuteAsync)}] User {bet.Wallet.User.Name} lost the bet.");
                         }
-                    }
 
-                    _betService.Update(bet);
+                        _betService.Update(bet);
+                    }
                 }
 
                 await Task.Delay(1500, stoppingToken);

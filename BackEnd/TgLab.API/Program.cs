@@ -29,10 +29,12 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IWalletService, WalletService>();
 builder.Services.AddTransient<IBetService, BetService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
-builder.Services.AddSingleton<GameService>();
+
 builder.Services.AddHostedService<GameService>();
 
+builder.Services.AddSingleton<GameService>();
 builder.Services.AddSingleton<WebSocketServer>();
+
 builder.Services.AddScoped<INotificationService, WebSocketNotificationService>();
 
 builder.Services.AddControllers();

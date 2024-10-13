@@ -175,7 +175,7 @@ namespace TgLab.Application.Bet.Services
 
             var transaction = new CreateTransactionDTO()
             {
-                WalletId = bet.Id,
+                WalletId = bet.Wallet.Id,
                 Amount = bet.Amount,
                 Type = TransactionType.REFUND
             };
