@@ -5,13 +5,13 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgLab.API", "TgLab.API\TgLab.API.csproj", "{55A029C4-AF0D-4F32-BFFC-2580530CE6D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Infrastructure", "TgLab.Infrastructure\TgLab.Infrastructure.csproj", "{AAC9592D-D619-4963-83D8-1A4DD3D288A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgLab.Infrastructure", "TgLab.Infrastructure\TgLab.Infrastructure.csproj", "{AAC9592D-D619-4963-83D8-1A4DD3D288A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Domain", "TgLab.Domain\TgLab.Domain.csproj", "{0B6E3B70-0227-4310-8CE9-FAFD1CA13151}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgLab.Domain", "TgLab.Domain\TgLab.Domain.csproj", "{0B6E3B70-0227-4310-8CE9-FAFD1CA13151}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Tests", "TgLab.Test.Tests\TgLab.Tests.csproj", "{029B7DE9-7CA8-4F78-A05D-2CDC80D64C9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgLab.Tests", "TgLab.Test.Tests\TgLab.Tests.csproj", "{029B7DE9-7CA8-4F78-A05D-2CDC80D64C9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgLab.Application", "TgLab.Application\TgLab.Application.csproj", "{3629E070-22F7-48F8-9FE3-1C058034C559}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgLab.Application", "TgLab.Application\TgLab.Application.csproj", "{3629E070-22F7-48F8-9FE3-1C058034C559}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

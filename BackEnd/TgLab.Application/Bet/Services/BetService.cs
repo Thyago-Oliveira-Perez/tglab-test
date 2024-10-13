@@ -8,6 +8,7 @@ using TgLab.Domain.DTOs.Bet;
 using TgLab.Domain.DTOs;
 using TgLab.Domain.Interfaces.Bet;
 using TgLab.Domain.Interfaces.User;
+using TgLab.Domain.Interfaces.Wallet;
 
 namespace TgLab.Application.Bet.Services
 {
@@ -15,13 +16,15 @@ namespace TgLab.Application.Bet.Services
     {
         private readonly TgLabContext _context;
         private readonly IUserService _userService;
+        private readonly IWalletService _walletService;
         private readonly GameService _gameService;
         private readonly int MinBet = 1;
 
-        public BetService(TgLabContext context, IUserService userService, GameService gameService)
+        public BetService(TgLabContext context, IUserService userService, IWalletService walletService, GameService gameService)
         {
             _context = context;
             _userService = userService;
+            _walletService = walletService;
             _gameService = gameService;
         }
 
@@ -49,15 +52,21 @@ namespace TgLab.Application.Bet.Services
                 Time = DateTime.Now
             };
 
-            var result = _context.Bets.Add(newBet);
+            var result = _context.Bets.Add(newBet).Entity;
             _context.SaveChanges();
 
-            _gameService.DoBet(result.Entity);
+            newBet.Wallet = wallet;
+
+            await _walletService.DecreaseBalance(wallet, dto.Amount);
+
+            _gameService.DoBet(result);
         }
 
         public void Update(BetDb bet)
         {
-            var betDb = _context.Bets.FirstOrDefault(b => b.Id == bet.Id);
+            var betDb = _context.Bets
+                .AsNoTracking()
+                .FirstOrDefault(b => b.Id == bet.Id);
 
             ArgumentNullException.ThrowIfNull(betDb);
 
@@ -141,24 +150,29 @@ namespace TgLab.Application.Bet.Services
 
             var walletIds = user.Wallets.Select(w => w.Id);
 
-            var bet = _context.Bets.FirstOrDefault(b => b.Id == id);
+            var bet = _context.Bets
+                .Include(b => b.Wallet)
+                .AsNoTracking()
+                .FirstOrDefault(b => b.Id == id);
 
             ArgumentNullException.ThrowIfNull(bet);
 
             if (!walletIds.Contains(bet.WalletId))
             {
-                throw new ArgumentException($"[{Cancel}] Invalid bet");
+                throw new ArgumentException($"[{nameof(Cancel)}] Invalid bet");
             }
 
             if (bet.Stage == BetStage.CANCELLED.Value)
             {
-                throw new ArgumentException($"[{Cancel}] Bet already cancelled");
+                throw new ArgumentException($"[{nameof(Cancel)}] Bet already cancelled");
             }
 
             bet.Stage = BetStage.CANCELLED.Value;
-
+            
             _context.Bets.Update(bet);
             _context.SaveChanges();
+
+            await _walletService.IncreaseBalance(bet.Wallet, bet.Amount);
         }
 
         public bool InvalidBet(CreateGambleDTO bet, WalletDb wallet)
@@ -168,7 +182,9 @@ namespace TgLab.Application.Bet.Services
 
         public bool IsCancelled(int id)
         {
-            var bet = _context.Bets.FirstOrDefault(b => b.Id == id);
+            var bet = _context.Bets
+                .AsNoTracking()
+                .FirstOrDefault(b => b.Id == id);
             
             ArgumentNullException.ThrowIfNull(bet);
 

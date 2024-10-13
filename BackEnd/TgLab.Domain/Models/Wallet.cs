@@ -1,4 +1,4 @@
-﻿using TgLab.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TgLab.Domain.Models
 {
@@ -6,6 +6,7 @@ namespace TgLab.Domain.Models
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        [Column(TypeName = "money")]
         public decimal Balance { get; set; }
         public string Currency { get; set; }
 

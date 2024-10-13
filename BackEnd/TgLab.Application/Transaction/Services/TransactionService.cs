@@ -23,7 +23,7 @@ namespace TgLab.Application.Transaction.Services
 
         public Task Create(BetDb bet, TransactionType type)
         {
-            var bonus = CalcBonus(bet, type);
+            var bonus = CalcBonus(bet, type.Value);
 
             var newTransaction = new TransactionDb()
             {
@@ -103,20 +103,21 @@ namespace TgLab.Application.Transaction.Services
             return new PaginatedList<TransactionDTO>(transactions, pageIndex, totalPages);
         }
 
-        public decimal CalcBonus(BetDb bet, TransactionType type)
+        public decimal CalcBonus(BetDb bet, string type)
         {
             if (type.Equals(TransactionType.LOSS.Value))
                 return 0;
 
             var lastFiveTransanctions = _context.Transactions
                 .Where(t => t.WalletId == bet.WalletId)
+                .OrderByDescending(t => t.Time)
                 .Take(5)
                 .AsNoTracking()
                 .ToList();
 
             var allLosses = lastFiveTransanctions.All(lf => lf.Type.Equals(TransactionType.LOSS.Value));
 
-            if (!allLosses && lastFiveTransanctions.Count == 5)
+            if (allLosses && lastFiveTransanctions.Count == 5)
             {
                 var totalLost = lastFiveTransanctions.Sum(lf => lf.Amount);
 

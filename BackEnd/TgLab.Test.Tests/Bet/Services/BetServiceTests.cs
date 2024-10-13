@@ -64,7 +64,7 @@ namespace TgLab.Tests.Bet.Services
 
             // Inicializando o GameService e o BetService
             _gameService = new GameService(_logger, _scopeFactory);
-            _betService = new BetService(_context, _userService, _gameService);
+            _betService = new BetService(_context, _userService, _walletService, _gameService);
 
             // CancellationToken para parar o serviço de background após cada teste
             _cancellationTokenSource = new CancellationTokenSource();

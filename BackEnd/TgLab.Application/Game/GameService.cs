@@ -61,13 +61,12 @@ namespace TgLab.Application.Game
                             bet.Bounty = bounty;
 
                             _transactionalService.Create(bet, TransactionType.WIN);
-                            _walletService.IncreaseBalance(bet.WalletId, bounty);
+                            _walletService.IncreaseBalance(bet.Wallet, bounty);
                         }
                         else
                         {
                             _logger.LogInformation($"[{nameof(ExecuteAsync)}] User {bet.Wallet.User.Name} lost the bet.");
                             _transactionalService.Create(bet, TransactionType.LOSS);
-                            _walletService.DecreaseBalance(bet.WalletId, bet.Amount);
                         }
                     }
 

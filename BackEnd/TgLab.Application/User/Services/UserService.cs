@@ -61,6 +61,7 @@ namespace TgLab.Application.User.Services
         {
             return await _context.Users
                 .Include(u => u.Wallets)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email.Equals(email));
         }
 

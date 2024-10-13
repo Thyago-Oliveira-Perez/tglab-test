@@ -34,30 +34,28 @@ namespace TgLab.Application.Wallet.Services
             _context.SaveChanges();
         }
 
-        public async Task DecreaseBalance(int Id, decimal amount)
+        public async Task DecreaseBalance(WalletDb wallet, decimal amount)
         {
-            var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
-
             ArgumentNullException.ThrowIfNull(wallet);
 
-            var balance = wallet.Balance -= amount;
+            wallet.Balance -= amount;
 
+            _context.Wallets.Update(wallet);
             _context.SaveChanges();
 
-            await _notificationService.SendMessageAsync($"{balance}");
+            await _notificationService.SendMessageAsync($"{wallet.Balance}");
         }
 
-        public async Task IncreaseBalance(int Id, decimal bounty)
+        public async Task IncreaseBalance(WalletDb wallet, decimal bounty)
         {
-            var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
-
             ArgumentNullException.ThrowIfNull(wallet);
 
-            var balance = wallet.Balance += bounty;
+            wallet.Balance += bounty;
 
+            _context.Wallets.Update(wallet);
             _context.SaveChanges();
 
-            await _notificationService.SendMessageAsync($"{balance}");
+            await _notificationService.SendMessageAsync($"{wallet.Balance}");
         }
     }
 }
