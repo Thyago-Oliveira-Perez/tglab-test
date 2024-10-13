@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Este projeto é uma API RESTful desenvolvida em C# (.NET 6) para gerenciar as transações e apostas de jogadores em uma plataforma. A API permite que jogadores criem contas, façam login, realizem apostas, e consultem suas transações e apostas. A documentação e testes dos endpoints são disponibilizados via Swagger.
+Este projeto é uma API RESTful desenvolvida em C# (.NET 6) para gerenciar as transações e apostas de jogadores em uma plataforma. A documentação e testes dos endpoints são disponibilizados via Swagger.
 
 ## Funcionalidades
 
@@ -37,6 +37,7 @@ Este projeto é uma API RESTful desenvolvida em C# (.NET 6) para gerenciar as tr
 ## Requisitos
 
 - **.NET 6**
+- **Docker**
 
 ## Migrations
 
@@ -82,3 +83,13 @@ Feito isso podemos subir os serviços com o seguinte comando:
 ```
 docker-compose up -d
 ```
+
+## WebSocket
+
+Para se connectar ao Websocket e poder visualizar o saudo do jogador sendo atualizado em tempo real basta usar está string de conexão:
+
+```
+wss://localhost:7199/ws
+```
+
+- Caso esteja rodando na docker substitua a porta.
