@@ -9,9 +9,9 @@ using TgLab.Domain.DTOs;
 using TgLab.Domain.Interfaces.Bet;
 using TgLab.Domain.Interfaces.User;
 using TgLab.Domain.Interfaces.Wallet;
-using TgLab.Domain.Models;
 using TgLab.Domain.Interfaces.Transaction;
 using TgLab.Domain.DTOs.Transanction;
+using TgLab.Domain.Exceptions.Bet;
 
 namespace TgLab.Application.Bet.Services
 {
@@ -189,7 +189,7 @@ namespace TgLab.Application.Bet.Services
         {
             if (bet.Stage == BetStage.CANCELLED.Value)
             {
-                throw new ArgumentException($"[{nameof(Cancel)}] Bet already cancelled");
+                throw new AllReadyCancelled();
             }
 
             bet.Stage = BetStage.CANCELLED.Value;

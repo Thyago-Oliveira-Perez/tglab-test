@@ -6,12 +6,15 @@ using TgLab.Application.User.Services;
 using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
-using TransactionDb = TgLab.Domain.Models.Transaction;
 using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Auth;
 using TgLab.Domain.Interfaces.Transaction;
 using TgLab.Domain.Interfaces.Wallet;
 using TgLab.Domain.Interfaces.User;
+using TransactionDb = TgLab.Domain.Models.Transaction;
+using UserDb = TgLab.Domain.Models.User;
+using WalletDb = TgLab.Domain.Models.Wallet;
+using TgLab.Domain.Models;
 
 namespace TgLab.Tests.Transaction.Services
 {
@@ -168,7 +171,88 @@ namespace TgLab.Tests.Transaction.Services
             var actual = await _transactionalService.ListTransactionsByWalletId(walletId, user0.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Items.Count(), Is.EqualTo(transactionsUser0.Count), "There are transactionsin the database");
+            Assert.That(actual.Items, Has.Count.EqualTo(transactionsUser0.Count), "There are transactionsin the database");
+        }
+
+        [Test]
+        public async Task Given_Win_After_Five_Losts_Should_Give_10_Bonus()
+        {
+            // Arrange
+            var expected = 5;
+            var user = new UserDb
+            {
+                Name = "Test Login User",
+                Email = "test@login.com",
+                Password = "test*login*password",
+                BirthDate = DateTime.Now.AddYears(-20)
+            };
+
+            var wallets = new List<WalletDb>()
+            {
+                new()
+                {
+                    UserId = 1,
+                    Balance = 1000,
+                    Currency = Currency.BRL.Value,
+                },
+                new()
+                {
+                    UserId = 1,
+                    Balance = 10000,
+                    Currency = Currency.USD.Value,
+                }
+            };
+
+            var transactions = new List<TransactionDb>()
+            {
+                    new()
+                    {
+                        WalletId = 1,
+                        Amount = 10,
+                        Time = DateTime.Now,
+                        Type = TransactionType.BET.Value
+                    },
+                    new()
+                    {
+                        WalletId = 1,
+                        Amount = 10,
+                        Time = DateTime.Now,
+                        Type = TransactionType.BET.Value
+                    },
+                    new()
+                    {
+                        WalletId = 1,
+                        Amount = 10,
+                        Time = DateTime.Now,
+                        Type = TransactionType.BET.Value
+                    },
+                    new()
+                    {
+                        WalletId = 1,
+                        Amount = 10,
+                        Time = DateTime.Now,
+                        Type = TransactionType.BET.Value
+                    },
+                    new()
+                    {
+                        WalletId = 1,
+                        Amount = 10,
+                        Time = DateTime.Now,
+                        Type = TransactionType.BET.Value
+                    }
+            };
+
+            _context.Users.Add(user);
+            _context.Wallets.AddRange(wallets);
+            _context.Transactions.AddRange(transactions);
+
+            _context.SaveChanges();
+
+            // Act
+            var actual = _transactionalService.CalcBonus(1, TransactionType.WIN_BET);
+
+            // Assert
+            Assert.That(actual, Is.EqualTo(expected));
         }
     }
 }

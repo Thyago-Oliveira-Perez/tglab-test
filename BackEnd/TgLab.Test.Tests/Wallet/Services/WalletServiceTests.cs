@@ -6,10 +6,6 @@ using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Wallet;
 using TgLab.Domain.Interfaces.Transaction;
 using TgLab.Application.Transaction.Services;
-using TgLab.Domain.Interfaces.User;
-using TgLab.Application.User.Services;
-using TgLab.Domain.Interfaces.Auth;
-using TgLab.Application.Auth.Services;
 
 namespace TgLab.Tests.User.Services
 {
@@ -19,8 +15,6 @@ namespace TgLab.Tests.User.Services
         private TgLabContext _context;
         private IWalletService _walletService;
         private ITransactionService _transactionService;
-        private IUserService _userService;
-        private ICryptService _cryptService;
         private InMemoryNotificationService _notificationService;
 
         [SetUp]
@@ -32,10 +26,8 @@ namespace TgLab.Tests.User.Services
 
             _context = new TgLabContext(options);
             _notificationService = new InMemoryNotificationService();
-            _cryptService = new CryptService();
             _transactionService = new TransactionService(_context);
             _walletService = new WalletService(_context, _notificationService, _transactionService);
-            _userService = new UserService(_context, _walletService, _cryptService);
         }
 
         [TearDown]

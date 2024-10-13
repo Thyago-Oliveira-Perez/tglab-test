@@ -8,7 +8,6 @@ using TgLab.Application.User.Services;
 using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
-using TgLab.Domain.DTOs.User;
 using TgLab.Domain.DTOs.Bet;
 using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Auth;
@@ -20,6 +19,7 @@ using BetDb = TgLab.Domain.Models.Bet;
 using UserDb = TgLab.Domain.Models.User;
 using TgLab.Domain.Interfaces.Transaction;
 using TgLab.Application.Transaction.Services;
+using TgLab.Domain.Exceptions.Bet;
 
 namespace TgLab.Tests.Bet.Services
 {
@@ -341,6 +341,44 @@ namespace TgLab.Tests.Bet.Services
 
             // Assert
             Assert.That(actual.Stage, Is.EqualTo(BetStage.CANCELLED.Value), "There are bets in the database");
+        }
+
+        [Test]
+        public async Task Given_Already_Cancelled_Bet_Should_Throw_Exception()
+        {
+            // Arrange
+            var user = new UserDb
+            {
+                Name = "Test Login User",
+                Email = "test@login.com",
+                Password = "test*login*password",
+                BirthDate = DateTime.Now.AddYears(-20)
+            };
+
+            var wallet = new WalletDb()
+            {
+                UserId = 1,
+                Balance = 1000,
+                Currency = Currency.BRL.Value,
+            };
+
+            var bet = new BetDb()
+            {
+                WalletId = 1,
+                Amount = 10,
+                Bounty = 20,
+                Time = DateTime.Now,
+                Stage = BetStage.CANCELLED.Value
+            };
+
+            _context.Users.Add(user);
+            _context.Wallets.Add(wallet);
+            var result = _context.Bets.Add(bet);
+
+            _context.SaveChanges();
+
+            // Act && Assert
+            Assert.ThrowsAsync<AllReadyCancelled>(async () => await _betService.Cancel(result.Entity));
         }
     }
 }

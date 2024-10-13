@@ -79,7 +79,7 @@ namespace TgLab.Tests.User.Services
 
             // Assert
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-            Assert.IsNotNull(user);
+            Assert.That(user, Is.Not.Null);
         }
     }
 }

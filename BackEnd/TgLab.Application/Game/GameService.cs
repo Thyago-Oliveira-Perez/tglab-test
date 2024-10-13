@@ -81,12 +81,12 @@ namespace TgLab.Application.Game
             }
         }
 
-        private static bool CheckBetResult()
+        public static bool CheckBetResult()
         {
             return new Random().Next(2) == 0;
         }
 
-        private static decimal CalcBounty(decimal amount)
+        public static decimal CalcBounty(decimal amount)
         {
             return amount * 2;
         }
