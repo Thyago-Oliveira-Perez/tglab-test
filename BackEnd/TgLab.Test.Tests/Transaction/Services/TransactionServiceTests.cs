@@ -1,20 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TgLab.Application.Auth.Services;
 using TgLab.Application.Transaction.Services;
-using TgLab.Domain.DTOs.User;
-using TgLab.Application.User.Services;
-using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
-using TgLab.Tests.Bet.Services.Mock;
-using TgLab.Domain.Interfaces.Auth;
 using TgLab.Domain.Interfaces.Transaction;
-using TgLab.Domain.Interfaces.Wallet;
-using TgLab.Domain.Interfaces.User;
 using TransactionDb = TgLab.Domain.Models.Transaction;
 using UserDb = TgLab.Domain.Models.User;
 using WalletDb = TgLab.Domain.Models.Wallet;
-using TgLab.Domain.Models;
 
 namespace TgLab.Tests.Transaction.Services
 {
@@ -22,11 +13,7 @@ namespace TgLab.Tests.Transaction.Services
     public class TransactionServiceTests
     {
         private TgLabContext _context;
-        private IUserService _userService;
-        private IWalletService _walletService;
-        private ICryptService _cryptService;
         private ITransactionService _transactionalService;
-        private InMemoryNotificationService _notificationService;
 
         [SetUp]
         public void SetUp()
@@ -36,11 +23,7 @@ namespace TgLab.Tests.Transaction.Services
             .Options;
 
             _context = new TgLabContext(options);
-            _notificationService = new InMemoryNotificationService();
-            _cryptService = new CryptService();
             _transactionalService = new TransactionService(_context);
-            _walletService = new WalletService(_context, _notificationService, _transactionalService);
-            _userService = new UserService(_context, _walletService, _cryptService);
         }
 
         [TearDown]
@@ -54,7 +37,7 @@ namespace TgLab.Tests.Transaction.Services
         public async Task Given_Default_Should_Return_All_Transactions()
         {
             // Arrange
-            var userDto = new CreateUserDTO
+            var user = new UserDb
             {
                 Name = "Test Login User",
                 Email = "test@login.com",
@@ -62,47 +45,48 @@ namespace TgLab.Tests.Transaction.Services
                 BirthDate = DateTime.Now.AddYears(-20)
             };
 
-            await _userService.Create(userDto);
-
-            var user = _context.Users
-                .Include(u => u.Wallets)
-                .First(u => u.Email == userDto.Email);
-
-            var walletId = user.Wallets.First().Id;
+            var wallet = new WalletDb
+            {
+                UserId = 1,
+                Balance = 100,
+                Currency = Currency.BRL.Value,
+            };
 
             var transactions = new List<TransactionDb>()
-                {
+            {
                     new()
                     {
-                        WalletId = walletId,
+                        WalletId = 1,
                         Amount = 50,
                         Time = DateTime.Now,
                         Type = TransactionType.WIN_BET.Value
                     },
                     new()
                     {
-                        WalletId = walletId,
+                        WalletId = 1,
                         Amount = 13,
                         Time = DateTime.Now,
                         Type = TransactionType.BET.Value
                     }
-                };
+            };
 
-            // Act
+            _context.Users.Add(user);
+            _context.Wallets.Add(wallet);
             _context.Transactions.AddRange(transactions);
             _context.SaveChanges();
-
+            
+            // Act
             var actual = await _transactionalService.ListAll(user.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Items.Count(), Is.GreaterThan(0), "There are transactions in the database");
+            Assert.That(actual.Items, Has.Count.EqualTo(transactions.Count), "There are transactions in the database");
         }
 
         [Test]
-        public async Task Given_Default_Should_Cancel_A_Transaction_Based_On_Id()
+        public async Task Given_Default_Should_Return_All_Transactions_From_Given_Wallet()
         {
             // Arrange
-            var userDto0 = new CreateUserDTO
+            var user = new UserDb
             {
                 Name = "Test Login User",
                 Email = "test0@login.com",
@@ -110,43 +94,38 @@ namespace TgLab.Tests.Transaction.Services
                 BirthDate = DateTime.Now.AddYears(-20)
             };
 
-            var userDto1 = new CreateUserDTO
+            var wallets = new List<WalletDb>()
             {
-                Name = "Test Login User",
-                Email = "test1@login.com",
-                Password = "test*login*password",
-                BirthDate = DateTime.Now.AddYears(-20)
+               new()
+               {
+                    UserId = 1,
+                    Balance = 100,
+                    Currency = Currency.BRL.Value,
+               },
+               new()
+               {
+                    UserId = 1,
+                    Balance = 100,
+                    Currency = Currency.BRL.Value,
+               }
             };
 
-            await _userService.Create(userDto0);
-            await _userService.Create(userDto1);
-
-            var user0 = _context.Users
-                .Include(u => u.Wallets)
-                .First(u => u.Email == userDto0.Email);
-
-            var walletId = user0.Wallets.First().Id;
-
-            var transactionsUser0 = new List<TransactionDb>()
+            var transactions = new List<TransactionDb>()
             {
                     new()
                     {
-                        WalletId = walletId,
+                        WalletId = 1,
                         Amount = 50,
                         Time = DateTime.Now,
                         Type = TransactionType.WIN_BET.Value
                     },
                     new()
                     {
-                        WalletId = walletId,
+                        WalletId = 1,
                         Amount = 13,
                         Time = DateTime.Now,
                         Type = TransactionType.BET.Value
-                    }
-            };
-
-            var transactionsUser1 = new List<TransactionDb>()
-            {
+                    },
                     new()
                     {
                         WalletId = 2,
@@ -163,19 +142,21 @@ namespace TgLab.Tests.Transaction.Services
                     }
             };
 
-            // Act
-            _context.Transactions.AddRange(transactionsUser0);
-            _context.Transactions.AddRange(transactionsUser1);
+
+            _context.Users.Add(user);
+            _context.Wallets.AddRange(wallets);
+            _context.Transactions.AddRange(transactions);
             _context.SaveChanges();
 
-            var actual = await _transactionalService.ListTransactionsByWalletId(walletId, user0.Email, 1, 10);
+            // Act
+            var actual = await _transactionalService.ListTransactionsByWalletId(1, user.Email, 1, 10);
 
             // Assert
-            Assert.That(actual.Items, Has.Count.EqualTo(transactionsUser0.Count), "There are transactionsin the database");
+            Assert.That(actual.Items, Has.Count.EqualTo(2), "There are transactionsin the database");
         }
 
         [Test]
-        public async Task Given_Win_After_Five_Losts_Should_Give_10_Bonus()
+        public void Given_Win_After_Five_Losts_Should_Give_10_Bonus()
         {
             // Arrange
             var expected = 5;

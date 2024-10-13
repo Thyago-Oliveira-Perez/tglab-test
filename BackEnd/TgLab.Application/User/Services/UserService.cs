@@ -63,24 +63,5 @@ namespace TgLab.Application.User.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email.Equals(email));
         }
-
-        public Task DecreaseUserBalance(int Id, int walletId, int amount)
-        {
-            var user = _context.Users
-                .Include (u => u.Wallets)
-                .FirstOrDefault(u => u.Id == Id);
-
-            ArgumentNullException.ThrowIfNull(user);
-
-            var wallet = user.Wallets.FirstOrDefault(w => w.Id == walletId);
-
-            ArgumentNullException.ThrowIfNull(wallet);
-
-            wallet.Balance -= amount;
-
-            _context.SaveChanges();
-
-            return Task.CompletedTask;
-        }
     }
 }

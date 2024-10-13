@@ -1,17 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TgLab.Application.Auth.Services;
-using TgLab.Domain.DTOs.User;
-using TgLab.Application.User.Services;
-using TgLab.Application.Wallet.Services;
 using TgLab.Infrastructure.Context;
 using TgLab.Domain.Auth;
-using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Auth;
-using TgLab.Domain.Interfaces.Wallet;
-using TgLab.Domain.Interfaces.User;
-using TgLab.Domain.Interfaces.Transaction;
-using TgLab.Application.Transaction.Services;
+using UserDb = TgLab.Domain.Models.User;
 
 namespace TgLab.Tests.Auth.Services
 {
@@ -21,11 +14,7 @@ namespace TgLab.Tests.Auth.Services
         private TgLabContext _context;
         private IConfiguration _configuration;
         private IAuthService _authService;
-        private IUserService _userService;
-        private IWalletService _walletService;
-        private ITransactionService _transactionService;
         private ICryptService _cryptService;
-        private InMemoryNotificationService _notificationService;
 
         [SetUp]
         public void SetUp()
@@ -44,12 +33,8 @@ namespace TgLab.Tests.Auth.Services
                 .Build();
 
             _context = new TgLabContext(options);
-            _notificationService = new InMemoryNotificationService();
             _cryptService = new CryptService();
             _authService = new AuthService(_context, _configuration, _cryptService);
-            _transactionService = new TransactionService(_context);
-            _walletService = new WalletService(_context, _notificationService, _transactionService);
-            _userService = new UserService(_context, _walletService, _cryptService);
         }
 
         [TearDown]
@@ -69,16 +54,18 @@ namespace TgLab.Tests.Auth.Services
                 Password = "test*login*password"
             };
 
-            var userDto = new CreateUserDTO
+            var user = new UserDb
             {
                 Name = "Test Login User",
                 Email = "test@login.com",
-                Password = "test*login*password",
+                Password = _cryptService.HashPassword("test*login*password"),
                 BirthDate = DateTime.Now.AddYears(-20)
             };
 
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
             // Act
-            await _userService.Create(userDto);
             var actual = await _authService.Login(loginDto);
 
             // Assert

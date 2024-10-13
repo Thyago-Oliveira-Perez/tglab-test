@@ -13,7 +13,6 @@ namespace TgLab.Tests.Wallet.DTOs
             public void Given_Default_Should_Create_Wallet_Currency_BRL()
             {
                 // Arrange
-                var userId = 1;
                 var expectedCurrency = Currency.BRL.Value;
 
                 var sut = new CreateWalletDTO();
@@ -29,7 +28,6 @@ namespace TgLab.Tests.Wallet.DTOs
             public void Given_Default_Should_Create_Wallet_Balance_100()
             {
                 // Arrange
-                var userId = 1;
                 var expectedBalance = 100;
 
                 var sut = new CreateWalletDTO();

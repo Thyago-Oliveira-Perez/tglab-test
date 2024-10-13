@@ -7,6 +7,5 @@ namespace TgLab.Domain.Interfaces.User
     {
         public Task Create(CreateUserDTO dto);
         public Task<UserDb?> GetUserAndWalletsByEmail(string email);
-        public Task DecreaseUserBalance(int Id, int walletId, int amount);
     }
 }

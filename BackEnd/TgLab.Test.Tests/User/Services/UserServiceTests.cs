@@ -76,10 +76,31 @@ namespace TgLab.Tests.User.Services
 
             // Act
             await _userService.Create(dto);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
 
             // Assert
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
             Assert.That(user, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task Given_Default_Should_Return_User_And_His_Wallets()
+        {
+            // Arrange
+            var dto = new CreateUserDTO
+            {
+                Name = "Adult User",
+                Email = "adult@example.com",
+                Password = "password",
+                BirthDate = DateTime.Now.AddYears(-20)
+            };
+            await _userService.Create(dto);
+
+            // Act
+            var user = await _userService.GetUserAndWalletsByEmail(dto.Email);
+
+            // Assert
+            Assert.That(user, Is.Not.Null);
+            Assert.That(user.Wallets, Is.Not.Null);
         }
     }
 }

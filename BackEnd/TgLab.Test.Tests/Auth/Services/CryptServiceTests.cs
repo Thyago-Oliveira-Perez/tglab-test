@@ -6,7 +6,7 @@ namespace TgLab.Tests.Auth.Services
     public class CryptServiceTests
     {
         [Test]
-        public async Task Given_Default_Should_Hash_Password()
+        public void Given_Default_Should_Hash_Password()
         {
             // Arrange
             var password = "password";
@@ -16,11 +16,11 @@ namespace TgLab.Tests.Auth.Services
             var actual = sut.HashPassword(password);
 
             // Assert
-            Assert.That(actual.Length > password.Length, "Password hashed");
+            Assert.That(actual, Has.Length.GreaterThan(password.Length), "Password hashed");
         }
 
         [Test]
-        public async Task Given_Default_Should_Return_False()
+        public void Given_Default_Should_Return_False()
         {
             // Arrange
             var expected = false;
@@ -32,11 +32,11 @@ namespace TgLab.Tests.Auth.Services
             var actual = sut.InvalidPassword(password, savedPassword);
 
             // Assert
-            Assert.That(actual == expected, "User logged");
+            Assert.That(actual, Is.EqualTo(expected), "User logged");
         }
 
         [Test]
-        public async Task Given_Different_Password_Should_Return_True()
+        public void Given_Different_Password_Should_Return_True()
         {
             // Arrange
             var expected = true;
@@ -48,7 +48,7 @@ namespace TgLab.Tests.Auth.Services
             var actual = sut.InvalidPassword(password, savedPassword);
 
             // Assert
-            Assert.That(actual == expected, "User logged");
+            Assert.That(actual, Is.EqualTo(expected), "User logged");
         }
     }
 }

@@ -6,6 +6,8 @@ using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Wallet;
 using TgLab.Domain.Interfaces.Transaction;
 using TgLab.Application.Transaction.Services;
+using WalletDb = TgLab.Domain.Models.Wallet;
+using TgLab.Domain.Enums;
 
 namespace TgLab.Tests.User.Services
 {
@@ -48,7 +50,51 @@ namespace TgLab.Tests.User.Services
             var addedWallet = _walletService.Create(wallet, userEmail);
 
             // Assert
-            Assert.IsNotNull(addedWallet);
+            Assert.That(addedWallet, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task IncreaseBalance_ShouldIncreaseWalletBalanceAndSendNotification()
+        {
+            // Arrange
+            var increaseAmount = 50.0;
+            var wallet = new WalletDb() 
+            { 
+                Balance = 100.0,
+                Currency = Currency.BRL.Value
+            };
+            
+            _context.Wallets.Add(wallet);
+            _context.SaveChanges();
+
+            // Act
+            await _walletService.IncreaseBalance(wallet, increaseAmount);
+
+            // Assert
+            var updatedWallet = _context.Wallets.Find(wallet.Id);
+            Assert.That(updatedWallet.Balance, Is.EqualTo(150.0));
+        }
+
+        [Test]
+        public async Task DecreaseBalance_ShouldDecreaseWalletBalanceAndSendNotification()
+        {
+            // Arrange
+            var decreaseAmount = 30.0;
+            var wallet = new WalletDb()
+            { 
+                Balance = 100.0,
+                Currency = Currency.BRL.Value
+            };
+            
+            _context.Wallets.Add(wallet);
+            _context.SaveChanges();
+
+            // Act
+            await _walletService.DecreaseBalance(wallet, decreaseAmount);
+
+            // Assert
+            var updatedWallet = _context.Wallets.Find(wallet.Id);
+            Assert.That(updatedWallet.Balance, Is.EqualTo(70.0));
         }
     }
 }
