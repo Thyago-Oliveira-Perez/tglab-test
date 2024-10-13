@@ -1,20 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
-using TgLab.Application.Bet.Interfaces;
 using TgLab.Application.Bet.Services;
 using TgLab.Application.Game;
-using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
 using WalletDb = TgLab.Domain.Models.Wallet;
 using TgLab.Domain.DTOs.User;
 using TgLab.Domain.DTOs.Bet;
+using TgLab.Domain.Interfaces.Notification;
+using TgLab.Tests.Bet.Services.Mock;
+using TgLab.Domain.Interfaces.Auth;
+using TgLab.Domain.Interfaces.Bet;
+using TgLab.Domain.Interfaces.Wallet;
+using TgLab.Domain.Interfaces.User;
 
 namespace TgLab.Tests.Bet.Services
 {
@@ -31,16 +33,19 @@ namespace TgLab.Tests.Bet.Services
         private IServiceProvider _serviceProvider;
         private GameService _gameService;
         private CancellationTokenSource _cancellationTokenSource;
+        private InMemoryNotificationService _notificationService;
+
 
         [SetUp]
         public void SetUp()
         {
             var options = new DbContextOptionsBuilder<TgLabContext>()
                 .UseInMemoryDatabase(databaseName: "TgLab_Test_Database")
-                .Options;
+            .Options;
 
             _context = new TgLabContext(options);
-            _walletService = new WalletService(_context);
+            _notificationService = new InMemoryNotificationService();
+            _walletService = new WalletService(_context, _notificationService);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
 
@@ -59,7 +64,7 @@ namespace TgLab.Tests.Bet.Services
 
             // Inicializando o GameService e o BetService
             _gameService = new GameService(_logger, _scopeFactory);
-            _betService = new BetService(_context, _userService, _walletService, _gameService);
+            _betService = new BetService(_context, _userService, _gameService);
 
             // CancellationToken para parar o serviço de background após cada teste
             _cancellationTokenSource = new CancellationTokenSource();
@@ -71,40 +76,6 @@ namespace TgLab.Tests.Bet.Services
             _context.Database.EnsureDeleted();
             _context.Dispose();
             _cancellationTokenSource.Cancel();
-        }
-
-        [Test]
-        public async Task Given_Default_Should_Decrease_User_Balance()
-        {
-            // Arrange
-            var expected = 90;
-            var betAmount = 10;
-            var userDto = new CreateUserDTO
-            {
-                Name = "Test Login User",
-                Email = "test@login.com",
-                Password = "test*login*password",
-                BirthDate = DateTime.Now.AddYears(-20)
-            };
-
-            await _userService.Create(userDto);
-            var user = _context.Users
-                .Include(u => u.Wallets)
-                .First(u => u.Email == userDto.Email);
-
-            var createGambleDTO = new CreateGambleDTO()
-            {
-                WalletId = user.Wallets.First().Id,
-                Amount = betAmount
-            };
-
-            // Act
-            await _betService.Create(createGambleDTO, user.Email);
-
-            user = _context.Users.FirstOrDefault(u => u.Email == userDto.Email);
-
-            // Assert
-            Assert.That(user.Wallets.First().Balance, Is.EqualTo(expected));
         }
 
         [Test]

@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TgLab.Domain.DTOs.Transaction;
-using TgLab.Application.Transaction.Interfaces;
-using TgLab.Application.User.Interfaces;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
 using BetDb = TgLab.Domain.Models.Bet;
 using TransactionDb = TgLab.Domain.Models.Transaction;
 using TgLab.Domain.DTOs;
+using TgLab.Domain.Interfaces.Transaction;
+using TgLab.Domain.Interfaces.User;
 
 namespace TgLab.Application.Transaction.Services
 {
@@ -110,13 +110,13 @@ namespace TgLab.Application.Transaction.Services
 
             var lastFiveTransanctions = _context.Transactions
                 .Where(t => t.WalletId == bet.WalletId)
-                .TakeLast(5)
+                .Take(5)
                 .AsNoTracking()
                 .ToList();
 
             var allLosses = lastFiveTransanctions.All(lf => lf.Type.Equals(TransactionType.LOSS));
 
-            if (!allLosses)
+            if (!allLosses && lastFiveTransanctions.Count == 5)
             {
                 var totalLost = lastFiveTransanctions.Sum(lf => lf.Amount);
 

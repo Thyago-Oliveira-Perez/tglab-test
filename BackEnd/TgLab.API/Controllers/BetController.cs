@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TgLab.Application.Bet.Interfaces;
 using TgLab.Domain.DTOs;
 using TgLab.Domain.DTOs.Bet;
+using TgLab.Domain.Interfaces.Bet;
 
 namespace TgLab.API.Controllers
 {

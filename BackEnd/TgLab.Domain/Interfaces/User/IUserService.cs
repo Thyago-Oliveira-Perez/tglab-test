@@ -1,7 +1,7 @@
 ﻿using TgLab.Domain.DTOs.User;
 using UserDb = TgLab.Domain.Models.User;
 
-namespace TgLab.Application.User.Interfaces
+namespace TgLab.Domain.Interfaces.User
 {
     public interface IUserService
     {

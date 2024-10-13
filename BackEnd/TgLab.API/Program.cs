@@ -1,20 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TgLab.Application.Auth.Services;
-using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Wallet.Services;
 using TgLab.Infrastructure.Context;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using TgLab.Application.Auth.Interfaces;
 using Microsoft.OpenApi.Models;
 using TgLab.Application.Bet.Services;
-using TgLab.Application.Bet.Interfaces;
 using TgLab.Application.Game;
-using TgLab.Application.Transaction.Interfaces;
 using TgLab.Application.Transaction.Services;
+using TgLab.Application.Notification;
+using TgLab.Domain.Interfaces.Notification;
+using TgLab.Domain.Interfaces.Auth;
+using TgLab.Domain.Interfaces.Bet;
+using TgLab.Domain.Interfaces.Transaction;
+using TgLab.Domain.Interfaces.Wallet;
+using TgLab.Domain.Interfaces.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +30,10 @@ builder.Services.AddTransient<IWalletService, WalletService>();
 builder.Services.AddTransient<IBetService, BetService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<GameService>();
-
 builder.Services.AddHostedService<GameService>();
+
+builder.Services.AddSingleton<WebSocketServer>();
+builder.Services.AddScoped<INotificationService, WebSocketNotificationService>();
 
 builder.Services.AddControllers();
 
@@ -109,4 +113,25 @@ app.MapControllers();
 
 app.UseWebSockets();
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/ws")
+    {
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+
+            var webSocketServer = context.RequestServices.GetRequiredService<WebSocketServer>();
+            await webSocketServer.AddSocketAsync(webSocket);
+        }
+        else
+        {
+            context.Response.StatusCode = 400;
+        }
+    }
+    else
+    {
+        await next();
+    }
+});
 app.Run();

@@ -1,14 +1,13 @@
-﻿using TgLab.Application.Bet.Interfaces;
-using TgLab.Infrastructure.Context;
-using TgLab.Application.User.Interfaces;
+﻿using TgLab.Infrastructure.Context;
 using BetDb = TgLab.Domain.Models.Bet;
 using WalletDb = TgLab.Domain.Models.Wallet;
 using TgLab.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Game;
 using TgLab.Domain.DTOs.Bet;
 using TgLab.Domain.DTOs;
+using TgLab.Domain.Interfaces.Bet;
+using TgLab.Domain.Interfaces.User;
 
 namespace TgLab.Application.Bet.Services
 {
@@ -16,15 +15,13 @@ namespace TgLab.Application.Bet.Services
     {
         private readonly TgLabContext _context;
         private readonly IUserService _userService;
-        private readonly IWalletService _walletService;
         private readonly GameService _gameService;
         private readonly int MinBet = 1;
 
-        public BetService(TgLabContext context, IUserService userService, IWalletService walletService, GameService gameService)
+        public BetService(TgLabContext context, IUserService userService, GameService gameService)
         {
             _context = context;
             _userService = userService;
-            _walletService = walletService;
             _gameService = gameService;
         }
 
@@ -56,8 +53,16 @@ namespace TgLab.Application.Bet.Services
             _context.SaveChanges();
 
             _gameService.DoBet(result.Entity);
+        }
 
-            _walletService.DecreaseBalance(dto.WalletId, dto.Amount);
+        public void Update(BetDb bet)
+        {
+            var betDb = _context.Bets.FirstOrDefault(b => b.Id == bet.Id);
+
+            ArgumentNullException.ThrowIfNull(betDb);
+
+            var result = _context.Bets.Update(bet);
+            _context.SaveChanges();
         }
 
         public async Task<PaginatedList<BetDTO>> ListBetsByWalletId(int walletId, string userEmail, int pageIndex, int pageSize)
@@ -159,6 +164,15 @@ namespace TgLab.Application.Bet.Services
         public bool InvalidBet(CreateGambleDTO bet, WalletDb wallet)
         {
             return bet.Amount < 0 || bet.Amount < MinBet || wallet.Balance < bet.Amount;
+        }
+
+        public bool IsCancelled(int id)
+        {
+            var bet = _context.Bets.FirstOrDefault(b => b.Id == id);
+            
+            ArgumentNullException.ThrowIfNull(bet);
+
+            return bet.Stage == BetStage.CANCELLED;
         }
     }
 }

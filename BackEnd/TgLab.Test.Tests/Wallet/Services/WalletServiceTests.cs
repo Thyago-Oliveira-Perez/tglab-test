@@ -1,8 +1,9 @@
 ﻿using TgLab.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using TgLab.Application.Wallet.Services;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Domain.DTOs.Wallet;
+using TgLab.Tests.Bet.Services.Mock;
+using TgLab.Domain.Interfaces.Wallet;
 
 namespace TgLab.Tests.User.Services
 {
@@ -11,16 +12,18 @@ namespace TgLab.Tests.User.Services
     {
         private TgLabContext _context;
         private IWalletService _walletService;
+        private InMemoryNotificationService _notificationService;
 
         [SetUp]
         public void SetUp()
         {
             var options = new DbContextOptionsBuilder<TgLabContext>()
                 .UseInMemoryDatabase(databaseName: "TgLab_Test_Database")
-                .Options;
+            .Options;
 
             _context = new TgLabContext(options);
-            _walletService = new WalletService(_context);
+            _notificationService = new InMemoryNotificationService();
+            _walletService = new WalletService(_context, _notificationService);
         }
 
         [TearDown]

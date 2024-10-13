@@ -1,4 +1,4 @@
-﻿using TgLab.Application.Auth.Interfaces;
+﻿using TgLab.Domain.Interfaces.Auth;
 using Crypt = BCrypt.Net.BCrypt;
 
 namespace TgLab.Application.Auth.Services

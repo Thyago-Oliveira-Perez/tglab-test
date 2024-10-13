@@ -1,6 +1,6 @@
 ﻿using TgLab.Domain.Auth;
 
-namespace TgLab.Application.Auth.Interfaces
+namespace TgLab.Domain.Interfaces.Auth
 {
     public interface IAuthService
     {

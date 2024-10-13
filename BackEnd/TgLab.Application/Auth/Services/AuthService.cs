@@ -6,10 +6,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TgLab.Domain.Auth;
-using TgLab.Application.Auth.Interfaces;
 using TgLab.Domain.DTOs.User;
 using TgLab.Domain.DTOs.Wallet;
 using TgLab.Infrastructure.Context;
+using TgLab.Domain.Interfaces.Auth;
 
 namespace TgLab.Application.Auth.Services
 {

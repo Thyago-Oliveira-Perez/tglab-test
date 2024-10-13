@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
 using TgLab.Domain.DTOs.User;
-using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Wallet.Services;
 using TgLab.Infrastructure.Context;
 using TgLab.Domain.Auth;
+using TgLab.Tests.Bet.Services.Mock;
+using TgLab.Domain.Interfaces.Auth;
+using TgLab.Domain.Interfaces.Wallet;
+using TgLab.Domain.Interfaces.User;
 
 namespace TgLab.Tests.Auth.Services
 {
@@ -21,6 +22,7 @@ namespace TgLab.Tests.Auth.Services
         private IUserService _userService;
         private IWalletService _walletService;
         private ICryptService _cryptService;
+        private InMemoryNotificationService _notificationService;
 
         [SetUp]
         public void SetUp()
@@ -39,7 +41,8 @@ namespace TgLab.Tests.Auth.Services
                 .Build();
 
             _context = new TgLabContext(options);
-            _walletService = new WalletService(_context);
+            _notificationService = new InMemoryNotificationService();
+            _walletService = new WalletService(_context, _notificationService);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
             _authService = new AuthService(_context, _configuration, _cryptService);

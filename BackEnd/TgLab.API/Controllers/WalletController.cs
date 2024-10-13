@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Domain.DTOs.Wallet;
+using TgLab.Domain.Interfaces.Wallet;
 
 namespace TgLab.API.Controllers
 {

@@ -1,17 +1,20 @@
 ﻿using TgLab.Domain.DTOs.Wallet;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Infrastructure.Context;
 using WalletDb = TgLab.Domain.Models.Wallet;
+using TgLab.Domain.Interfaces.Notification;
+using TgLab.Domain.Interfaces.Wallet;
 
 namespace TgLab.Application.Wallet.Services
 {
     public class WalletService : IWalletService
     {
         private readonly TgLabContext _context;
+        private readonly INotificationService _notificationService;
 
-        public WalletService(TgLabContext context)
+        public WalletService(TgLabContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         public async Task Create(CreateWalletDTO dto, string userEmail)
@@ -31,30 +34,30 @@ namespace TgLab.Application.Wallet.Services
             _context.SaveChanges();
         }
 
-        public Task DecreaseBalance(int Id, decimal amount)
+        public async Task DecreaseBalance(int Id, decimal amount)
         {
             var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
 
             ArgumentNullException.ThrowIfNull(wallet);
 
-            wallet.Balance -= amount;
+            var balance = wallet.Balance -= amount;
 
             _context.SaveChanges();
 
-            return Task.CompletedTask;
+            await _notificationService.SendMessageAsync($"{balance}");
         }
 
-        public Task IncreaseBalance(int Id, decimal bounty)
+        public async Task IncreaseBalance(int Id, decimal bounty)
         {
             var wallet = _context.Wallets.FirstOrDefault(w => w.Id == Id);
 
             ArgumentNullException.ThrowIfNull(wallet);
 
-            wallet.Balance += bounty;
+            var balance = wallet.Balance += bounty;
 
             _context.SaveChanges();
 
-            return Task.CompletedTask;
+            await _notificationService.SendMessageAsync($"{balance}");
         }
     }
 }

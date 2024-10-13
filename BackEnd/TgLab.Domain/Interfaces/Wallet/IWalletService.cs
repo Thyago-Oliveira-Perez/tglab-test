@@ -1,6 +1,6 @@
 ﻿using TgLab.Domain.DTOs.Wallet;
 
-namespace TgLab.Application.Wallet.Interfaces
+namespace TgLab.Domain.Interfaces.Wallet
 {
     public interface IWalletService
     {

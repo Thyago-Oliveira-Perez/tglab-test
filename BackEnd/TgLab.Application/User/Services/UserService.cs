@@ -1,12 +1,12 @@
-﻿using TgLab.Domain.DTOs.User;   
+﻿using TgLab.Domain.DTOs.User;
 using TgLab.Infrastructure.Context;
-using TgLab.Application.User.Exceptions;
-using TgLab.Application.User.Interfaces;
 using UserDb = TgLab.Domain.Models.User;
 using TgLab.Domain.DTOs.Wallet;
-using TgLab.Application.Wallet.Interfaces;
-using TgLab.Application.Auth.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using TgLab.Domain.Interfaces.Auth;
+using TgLab.Domain.Interfaces.Wallet;
+using TgLab.Domain.Interfaces.User;
+using TgLab.Domain.Exceptions.User;
 
 namespace TgLab.Application.User.Services
 {

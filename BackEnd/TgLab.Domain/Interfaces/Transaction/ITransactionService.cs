@@ -3,7 +3,7 @@ using TgLab.Domain.DTOs.Transaction;
 using TgLab.Domain.Enums;
 using BetDb = TgLab.Domain.Models.Bet;
 
-namespace TgLab.Application.Transaction.Interfaces
+namespace TgLab.Domain.Interfaces.Transaction
 {
     public interface ITransactionService
     {

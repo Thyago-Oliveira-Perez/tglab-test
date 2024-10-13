@@ -1,16 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
-using TgLab.Application.Transaction.Interfaces;
 using TgLab.Application.Transaction.Services;
 using TgLab.Domain.DTOs.User;
-using TgLab.Application.User.Interfaces;
 using TgLab.Application.User.Services;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Application.Wallet.Services;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
 using TransactionDb = TgLab.Domain.Models.Transaction;
+using TgLab.Domain.Interfaces.Notification;
+using TgLab.Tests.Bet.Services.Mock;
+using TgLab.Domain.Interfaces.Auth;
+using TgLab.Domain.Interfaces.Transaction;
+using TgLab.Domain.Interfaces.Wallet;
+using TgLab.Domain.Interfaces.User;
 
 namespace TgLab.Tests.Transaction.Services
 {
@@ -22,16 +24,18 @@ namespace TgLab.Tests.Transaction.Services
         private IWalletService _walletService;
         private ICryptService _cryptService;
         private ITransactionService _transactionalService;
+        private InMemoryNotificationService _notificationService;
 
         [SetUp]
         public void SetUp()
         {
             var options = new DbContextOptionsBuilder<TgLabContext>()
                 .UseInMemoryDatabase(databaseName: "TgLab_Test_Database")
-                .Options;
+            .Options;
 
             _context = new TgLabContext(options);
-            _walletService = new WalletService(_context);
+            _notificationService = new InMemoryNotificationService();
+            _walletService = new WalletService(_context, _notificationService);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
             _transactionalService = new TransactionService(_context, _userService);
@@ -99,7 +103,7 @@ namespace TgLab.Tests.Transaction.Services
             var userDto0 = new CreateUserDTO
             {
                 Name = "Test Login User",
-                Email = "test@login.com",
+                Email = "test0@login.com",
                 Password = "test*login*password",
                 BirthDate = DateTime.Now.AddYears(-20)
             };
@@ -107,7 +111,7 @@ namespace TgLab.Tests.Transaction.Services
             var userDto1 = new CreateUserDTO
             {
                 Name = "Test Login User",
-                Email = "test@login.com",
+                Email = "test1@login.com",
                 Password = "test*login*password",
                 BirthDate = DateTime.Now.AddYears(-20)
             };

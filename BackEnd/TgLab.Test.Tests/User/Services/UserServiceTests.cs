@@ -1,13 +1,14 @@
 ﻿using TgLab.Domain.DTOs.User;
-using TgLab.Application.User.Exceptions;
 using TgLab.Application.User.Services;
 using TgLab.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using TgLab.Application.Wallet.Services;
-using TgLab.Application.Wallet.Interfaces;
-using TgLab.Application.User.Interfaces;
-using TgLab.Application.Auth.Interfaces;
 using TgLab.Application.Auth.Services;
+using TgLab.Tests.Bet.Services.Mock;
+using TgLab.Domain.Exceptions.User;
+using TgLab.Domain.Interfaces.Auth;
+using TgLab.Domain.Interfaces.Wallet;
+using TgLab.Domain.Interfaces.User;
 
 namespace TgLab.Tests.User.Services
 {
@@ -18,16 +19,18 @@ namespace TgLab.Tests.User.Services
         private IUserService _userService;
         private IWalletService _walletService;
         private ICryptService _cryptService;
+        private InMemoryNotificationService _notificationService;
 
         [SetUp]
         public void SetUp()
         {
             var options = new DbContextOptionsBuilder<TgLabContext>()
                 .UseInMemoryDatabase(databaseName: "TgLab_Test_Database")
-                .Options;
+            .Options;
 
             _context = new TgLabContext(options);
-            _walletService = new WalletService(_context);
+            _notificationService = new InMemoryNotificationService();
+            _walletService = new WalletService(_context, _notificationService);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
         }

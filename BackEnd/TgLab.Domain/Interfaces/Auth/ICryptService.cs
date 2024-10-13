@@ -1,4 +1,4 @@
-﻿namespace TgLab.Application.Auth.Interfaces
+﻿namespace TgLab.Domain.Interfaces.Auth
 {
     public interface ICryptService
     {

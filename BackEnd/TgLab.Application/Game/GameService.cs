@@ -2,11 +2,12 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using TgLab.Application.Bet.Services;
-using TgLab.Application.Transaction.Interfaces;
-using TgLab.Application.Wallet.Interfaces;
 using TgLab.Domain.Enums;
 using BetDb = TgLab.Domain.Models.Bet;
 using Microsoft.Extensions.DependencyInjection;
+using TgLab.Domain.Interfaces.Bet;
+using TgLab.Domain.Interfaces.Transaction;
+using TgLab.Domain.Interfaces.Wallet;
 
 namespace TgLab.Application.Game
 {
@@ -41,22 +42,36 @@ namespace TgLab.Application.Game
 
                     var _transactionalService = scope.ServiceProvider.GetRequiredService<ITransactionService>();
                     var _walletService = scope.ServiceProvider.GetRequiredService<IWalletService>();
+                    var _betService = scope.ServiceProvider.GetRequiredService<IBetService>();
 
-                    if (won)
+                    if (_betService.IsCancelled(bet.Id))
                     {
-
-                        _logger.LogInformation($"[{nameof(ExecuteAsync)}] User {bet.Wallet.User.Name} won the bet!");
-
-                        var bounty = CalcBounty(bet.Amount);
-
-                        _transactionalService.Create(bet, TransactionType.WIN);
-                        _walletService.IncreaseBalance(bet.WalletId, bounty);
-                    }
+                        bet.Stage = BetStage.CANCELLED;
+                    } 
                     else
                     {
-                        _logger.LogInformation($"[{nameof(ExecuteAsync)}] User {bet.Wallet.User.Name} lost the bet.");
-                        _transactionalService.Create(bet, TransactionType.LOSS);
+                        bet.Stage = BetStage.EXECUTED;
+                        
+                        if (won)
+                        {
+                            _logger.LogInformation($"[{nameof(ExecuteAsync)}] User {bet.Wallet.User.Name} won the bet!");
+
+                            var bounty = CalcBounty(bet.Amount);
+
+                            bet.Bounty = bounty;
+
+                            _transactionalService.Create(bet, TransactionType.WIN);
+                            _walletService.IncreaseBalance(bet.WalletId, bounty);
+                        }
+                        else
+                        {
+                            _logger.LogInformation($"[{nameof(ExecuteAsync)}] User {bet.Wallet.User.Name} lost the bet.");
+                            _transactionalService.Create(bet, TransactionType.LOSS);
+                            _walletService.DecreaseBalance(bet.WalletId, bet.Amount);
+                        }
                     }
+
+                    _betService.Update(bet);
                 }
 
                 await Task.Delay(1500, stoppingToken);

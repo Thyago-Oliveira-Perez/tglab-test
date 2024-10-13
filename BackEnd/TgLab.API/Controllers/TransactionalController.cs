@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TgLab.Application.Transaction.Interfaces;
 using TgLab.Domain.DTOs;
 using TgLab.Domain.DTOs.Transaction;
+using TgLab.Domain.Interfaces.Transaction;
 
 namespace TgLab.API.Controllers
 {
