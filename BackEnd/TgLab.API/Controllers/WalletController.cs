@@ -49,5 +49,65 @@ namespace TgLab.API.Controllers
                 return StatusCode(500, "Internal server error.");
             }
         }
+
+        [HttpPost("Deposit")]
+        public IActionResult Deposit([FromBody] DepositWalletedDTO dto)
+        {
+            try
+            {
+                string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var result = _service.Deposit(dto, userEmail);
+
+                if (result.IsCompleted)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Wallet deposit failed.");
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError($"[{nameof(Deposit)}] Invalid argument: {ex.Message}", ex);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"[{nameof(Deposit)}] Error trying to deposit balance in wallet: {ex.Message}", ex);
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpPost("Withdraw")]
+        public IActionResult Withdraw([FromBody] WithdrawWalletDTO dto)
+        {
+            try
+            {
+                string userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var result = _service.Withdraw(dto, userEmail);
+
+                if (result.IsCompleted)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Wallet withdraw failed.");
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError($"[{nameof(Withdraw)}] Invalid argument: {ex.Message}", ex);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"[{nameof(Withdraw)}] Error trying to withdraw balance: {ex.Message}", ex);
+                return StatusCode(500, "Internal server error.");
+            }
+        }
     }
 }

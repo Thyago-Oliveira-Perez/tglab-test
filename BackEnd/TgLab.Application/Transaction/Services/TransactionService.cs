@@ -2,35 +2,32 @@
 using TgLab.Domain.DTOs.Transaction;
 using TgLab.Domain.Enums;
 using TgLab.Infrastructure.Context;
-using BetDb = TgLab.Domain.Models.Bet;
 using TransactionDb = TgLab.Domain.Models.Transaction;
 using TgLab.Domain.DTOs;
 using TgLab.Domain.Interfaces.Transaction;
-using TgLab.Domain.Interfaces.User;
+using TgLab.Domain.DTOs.Transanction;
 
 namespace TgLab.Application.Transaction.Services
 {
     public class TransactionService : ITransactionService
     {
         private readonly TgLabContext _context;
-        private readonly IUserService _userService;
 
-        public TransactionService(TgLabContext context, IUserService userService)
+        public TransactionService(TgLabContext context)
         {
             _context = context;
-            _userService = userService;
         }
 
-        public Task Create(BetDb bet, TransactionType type)
+        public Task Create(CreateTransactionDTO dto)
         {
-            var bonus = CalcBonus(bet, type.Value);
+            var bonus = CalcBonus(dto.WalletId, dto.Type.Value);
 
             var newTransaction = new TransactionDb()
             {
-                WalletId = bet.WalletId,
+                WalletId = dto.WalletId,
                 Time = DateTime.Now,
-                Type = type.Value,
-                Amount = bet.Amount + bonus,
+                Type = dto.Type.Value,
+                Amount = dto.Amount + bonus,
             };
 
             _context.Add(newTransaction);
@@ -41,7 +38,10 @@ namespace TgLab.Application.Transaction.Services
 
         public async Task<PaginatedList<TransactionDTO>> ListAll(string userEmail, int pageIndex, int pageSize)
         {
-            var user = await _userService.GetUserAndWalletsByEmail(userEmail);
+            var user = await _context.Users
+                .Include(u => u.Wallets)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Email.Equals(userEmail));
 
             ArgumentNullException.ThrowIfNull(user);
 
@@ -74,7 +74,10 @@ namespace TgLab.Application.Transaction.Services
 
         public async Task<PaginatedList<TransactionDTO>> ListTransactionsByWalletId(int walletId, string userEmail, int pageIndex, int pageSize)
         {
-            var user = await _userService.GetUserAndWalletsByEmail(userEmail);
+            var user = await _context.Users
+                .Include(u => u.Wallets)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Email.Equals(userEmail));
 
             ArgumentNullException.ThrowIfNull(user);
 
@@ -103,13 +106,13 @@ namespace TgLab.Application.Transaction.Services
             return new PaginatedList<TransactionDTO>(transactions, pageIndex, totalPages);
         }
 
-        public decimal CalcBonus(BetDb bet, string type)
+        public decimal CalcBonus(int walletId, string type)
         {
             if (type.Equals(TransactionType.BET.Value))
                 return 0;
 
             var lastFiveTransanctions = _context.Transactions
-                .Where(t => t.WalletId == bet.WalletId)
+                .Where(t => t.WalletId == walletId)
                 .OrderByDescending(t => t.Time)
                 .Take(5)
                 .AsNoTracking()

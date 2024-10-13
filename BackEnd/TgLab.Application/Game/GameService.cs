@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TgLab.Domain.Interfaces.Bet;
 using TgLab.Domain.Interfaces.Transaction;
 using TgLab.Domain.Interfaces.Wallet;
+using TgLab.Domain.DTOs.Transanction;
 
 namespace TgLab.Application.Game
 {
@@ -60,7 +61,14 @@ namespace TgLab.Application.Game
 
                             bet.Bounty = bounty;
 
-                            await _transactionalService.Create(bet, TransactionType.WIN_BET);
+                            var transaction = new CreateTransactionDTO()
+                            {
+                                WalletId = bet.WalletId,
+                                Amount = bet.Amount,
+                                Type = TransactionType.WIN_BET
+                            };
+
+                            await _transactionalService.Create(transaction);
                             await _walletService.IncreaseBalance(bet.Wallet, bounty);
                         }
                         else

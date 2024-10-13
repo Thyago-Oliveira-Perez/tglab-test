@@ -34,10 +34,10 @@ namespace TgLab.Tests.Transaction.Services
 
             _context = new TgLabContext(options);
             _notificationService = new InMemoryNotificationService();
-            _walletService = new WalletService(_context, _notificationService);
             _cryptService = new CryptService();
+            _transactionalService = new TransactionService(_context);
+            _walletService = new WalletService(_context, _notificationService, _transactionalService);
             _userService = new UserService(_context, _walletService, _cryptService);
-            _transactionalService = new TransactionService(_context, _userService);
         }
 
         [TearDown]

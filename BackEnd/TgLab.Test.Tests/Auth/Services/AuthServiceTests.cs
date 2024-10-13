@@ -10,6 +10,8 @@ using TgLab.Tests.Bet.Services.Mock;
 using TgLab.Domain.Interfaces.Auth;
 using TgLab.Domain.Interfaces.Wallet;
 using TgLab.Domain.Interfaces.User;
+using TgLab.Domain.Interfaces.Transaction;
+using TgLab.Application.Transaction.Services;
 
 namespace TgLab.Tests.Auth.Services
 {
@@ -21,6 +23,7 @@ namespace TgLab.Tests.Auth.Services
         private IAuthService _authService;
         private IUserService _userService;
         private IWalletService _walletService;
+        private ITransactionService _transactionService;
         private ICryptService _cryptService;
         private InMemoryNotificationService _notificationService;
 
@@ -42,10 +45,11 @@ namespace TgLab.Tests.Auth.Services
 
             _context = new TgLabContext(options);
             _notificationService = new InMemoryNotificationService();
-            _walletService = new WalletService(_context, _notificationService);
             _cryptService = new CryptService();
-            _userService = new UserService(_context, _walletService, _cryptService);
             _authService = new AuthService(_context, _configuration, _cryptService);
+            _transactionService = new TransactionService(_context);
+            _walletService = new WalletService(_context, _notificationService, _transactionService);
+            _userService = new UserService(_context, _walletService, _cryptService);
         }
 
         [TearDown]
@@ -78,7 +82,7 @@ namespace TgLab.Tests.Auth.Services
             var actual = await _authService.Login(loginDto);
 
             // Assert
-            Assert.That(actual.Token.Length > 0, "User logged");
+            Assert.That(actual.Token, Is.Not.Empty, "User logged");
         }
     }
 }

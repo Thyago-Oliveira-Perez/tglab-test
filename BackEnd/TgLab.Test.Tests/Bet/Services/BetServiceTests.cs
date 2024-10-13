@@ -49,7 +49,8 @@ namespace TgLab.Tests.Bet.Services
 
             _context = new TgLabContext(options);
             _notificationService = new InMemoryNotificationService();
-            _walletService = new WalletService(_context, _notificationService);
+            _transactionService = new TransactionService(_context);
+            _walletService = new WalletService(_context, _notificationService, _transactionService);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
 
@@ -68,7 +69,6 @@ namespace TgLab.Tests.Bet.Services
 
             // Inicializando o GameService e o BetService
             _gameService = new GameService(_logger, _scopeFactory);
-            _transactionService = new TransactionService(_context, _userService);
             _betService = new BetService(_context, _userService, _walletService, _transactionService, _gameService);
 
             // CancellationToken para parar o serviço de background após cada teste

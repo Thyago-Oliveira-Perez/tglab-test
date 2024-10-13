@@ -11,6 +11,7 @@ using TgLab.Domain.Interfaces.User;
 using TgLab.Domain.Interfaces.Wallet;
 using TgLab.Domain.Models;
 using TgLab.Domain.Interfaces.Transaction;
+using TgLab.Domain.DTOs.Transanction;
 
 namespace TgLab.Application.Bet.Services
 {
@@ -62,7 +63,15 @@ namespace TgLab.Application.Bet.Services
             result.Wallet = wallet;
 
             await _walletService.DecreaseBalance(wallet, dto.Amount);
-            await _transactionService.Create(result, TransactionType.BET);
+
+            var transaction = new CreateTransactionDTO()
+            {
+                WalletId = wallet.Id,
+                Amount = dto.Amount,
+                Type = TransactionType.BET
+            };
+
+            await _transactionService.Create(transaction);
 
             _gameService.DoBet(result);
         }
@@ -164,8 +173,15 @@ namespace TgLab.Application.Bet.Services
                 throw new ArgumentException($"[{nameof(Cancel)}] Invalid bet");
             }
 
+            var transaction = new CreateTransactionDTO()
+            {
+                WalletId = bet.Id,
+                Amount = bet.Amount,
+                Type = TransactionType.REFUND
+            };
+
             await Cancel(bet);
-            await _transactionService.Create(bet, TransactionType.REFUND);
+            await _transactionService.Create(transaction);
             await _walletService.IncreaseBalance(bet.Wallet, bet.Amount);
         }
 

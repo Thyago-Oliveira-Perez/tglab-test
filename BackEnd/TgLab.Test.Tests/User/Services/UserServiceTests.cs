@@ -9,6 +9,8 @@ using TgLab.Domain.Exceptions.User;
 using TgLab.Domain.Interfaces.Auth;
 using TgLab.Domain.Interfaces.Wallet;
 using TgLab.Domain.Interfaces.User;
+using TgLab.Application.Transaction.Services;
+using TgLab.Domain.Interfaces.Transaction;
 
 namespace TgLab.Tests.User.Services
 {
@@ -18,6 +20,7 @@ namespace TgLab.Tests.User.Services
         private TgLabContext _context;
         private IUserService _userService;
         private IWalletService _walletService;
+        private ITransactionService _transactionService;
         private ICryptService _cryptService;
         private InMemoryNotificationService _notificationService;
 
@@ -30,7 +33,8 @@ namespace TgLab.Tests.User.Services
 
             _context = new TgLabContext(options);
             _notificationService = new InMemoryNotificationService();
-            _walletService = new WalletService(_context, _notificationService);
+            _transactionService = new TransactionService(_context);
+            _walletService = new WalletService(_context, _notificationService, _transactionService);
             _cryptService = new CryptService();
             _userService = new UserService(_context, _walletService, _cryptService);
         }
