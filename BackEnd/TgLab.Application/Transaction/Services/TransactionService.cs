@@ -43,9 +43,10 @@ namespace TgLab.Application.Transaction.Services
 
             ArgumentNullException.ThrowIfNull(user);
 
-            var wallet = user.Wallets.SingleOrDefault(w => w.UserId == user.Id);
-
-            ArgumentNullException.ThrowIfNull(wallet);
+            if (!user.Wallets.Any())
+            {
+                throw new ArgumentException("User don't have wallets");
+            }
 
             var walletIds = user.Wallets.Select(w => w.Id);
 
